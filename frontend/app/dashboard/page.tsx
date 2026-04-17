@@ -152,14 +152,30 @@ export default async function DashboardPage() {
 
         {/* Modules Grid */}
         <div className="dashboard-grid">
-          {MODULES.map((mod) => (
-            <div key={mod.title} className="dashboard-card">
-              <div className="card-icon-wrap">{mod.icon}</div>
-              <div className="card-title">{mod.title}</div>
-              <div className="card-desc">{mod.desc}</div>
-              <span className={`card-badge ${mod.badgeClass}`}>{mod.badge}</span>
-            </div>
-          ))}
+          {MODULES.map((mod) => {
+            const isStaff = mod.title === 'Gestión de Profesionales'
+            
+            const cardContent = (
+              <div className="dashboard-card" style={isStaff ? { cursor: 'pointer', border: '1px solid var(--color-primary)' } : {}}>
+                <div className="card-icon-wrap">{mod.icon}</div>
+                <div className="card-title">{mod.title}</div>
+                <div className="card-desc">{mod.desc}</div>
+                <span className={`card-badge ${isStaff ? 'badge-active' : mod.badgeClass}`}>
+                  {isStaff ? 'Acceder' : mod.badge}
+                </span>
+              </div>
+            )
+
+            if (isStaff) {
+              return (
+                <Link key={mod.title} href="/dashboard/staff" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {cardContent}
+                </Link>
+              )
+            }
+
+            return <div key={mod.title}>{cardContent}</div>
+          })}
         </div>
       </main>
     </div>

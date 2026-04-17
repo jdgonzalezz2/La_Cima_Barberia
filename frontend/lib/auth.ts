@@ -32,3 +32,31 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     name,
   }
 }
+
+export interface AuthProfile extends AuthUser {
+  tenant_id: string | null
+  role: string | null
+}
+
+/**
+ * Get the user's profile from the database, including their linked tenant.
+ */
+export async function getCurrentProfile(): Promise<AuthProfile | null> {
+  const user = await getCurrentUser()
+  if (!user) return null
+
+  const accessToken = await getAccessToken()
+  const insforge = createInsForgeServerClient(accessToken)
+
+  const { data: profile } = await insforge.database
+    .from('profiles')
+    .select('tenant_id, role')
+    .eq('id', user.id)
+    .single()
+
+  return {
+    ...user,
+    tenant_id: profile?.tenant_id ?? null,
+    role: profile?.role ?? null,
+  }
+}

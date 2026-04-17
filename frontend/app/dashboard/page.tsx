@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { getCurrentUser } from '@/lib/auth'
+import Link from 'next/link'
+import { getCurrentProfile } from '@/lib/auth'
+import { createInsForgeServerClient } from '@/lib/insforge-server'
+import { getAccessToken } from '@/lib/cookies'
 import { signOutAction } from './actions'
 
 export const metadata: Metadata = { title: 'Dashboard' }
@@ -51,10 +54,24 @@ const MODULES = [
 ]
 
 export default async function DashboardPage() {
-  const user = await getCurrentUser()
-  if (!user) redirect('/login')
+  const profile = await getCurrentProfile()
+  if (!profile) redirect('/login')
 
-  const firstName = user.name?.split(' ')[0] ?? user.email.split('@')[0]
+  const accessToken = await getAccessToken()
+  const insforge = createInsForgeServerClient(accessToken)
+
+  // Fetch tenant info
+  let tenant = null
+  if (profile.tenant_id) {
+    const { data } = await insforge.database
+      .from('tenants')
+      .select('name, slug, logo_url')
+      .eq('id', profile.tenant_id)
+      .single()
+    tenant = data
+  }
+
+  const firstName = profile.name?.split(' ')[0] ?? profile.email.split('@')[0]
 
   return (
     <div className="dashboard-root">
@@ -66,8 +83,8 @@ export default async function DashboardPage() {
         </div>
         <div className="nav-user">
           <div className="nav-user-info">
-            <div className="nav-user-name">{user.name ?? 'Usuario'}</div>
-            <div className="nav-user-email">{user.email}</div>
+            <div className="nav-user-name">{profile.name ?? 'Usuario'}</div>
+            <div className="nav-user-email">{profile.email}</div>
           </div>
           <form action={signOutAction}>
             <button type="submit" className="btn btn-ghost btn-signout">
@@ -87,14 +104,51 @@ export default async function DashboardPage() {
           <p>Bienvenido a Bookeiro. Tu plataforma de gestión integral está lista.</p>
         </section>
 
-        {/* Info card */}
-        <div
-          className="alert alert-info"
-          style={{ marginBottom: '2rem', maxWidth: '600px' }}
-        >
-          🚀 <strong>Autenticación completada.</strong> Los módulos de agendamiento, POS y comisiones
-          están en desarrollo activo. Pronto estarán disponibles.
-        </div>
+        {/* Tenant Info Card */}
+        {tenant && (
+          <div style={{
+            background: 'var(--gradient-card)',
+            border: '1px solid var(--color-glass-border)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '1.5rem',
+            marginBottom: '2rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{
+                width: 60, height: 60, borderRadius: '50%', background: 'rgba(255,255,255,0.05)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid var(--color-border)'
+              }}>
+                {tenant.logo_url ? (
+                  <img src={tenant.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <span style={{ fontSize: '1.5rem' }}>💈</span>
+                )}
+              </div>
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', color: 'var(--color-text-primary)' }}>
+                  {tenant.name}
+                </h2>
+                <a href={`/${tenant.slug}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontSize: '0.9rem', textDecoration: 'none' }}>
+                  bookeiro.com/{tenant.slug} ↗
+                </a>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <a href={`/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
+                Ver Sitio Público
+              </a>
+              <Link href="/dashboard/settings" className="btn btn-primary">
+                Configurar Sitio
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Modules Grid */}
         <div className="dashboard-grid">
@@ -107,36 +161,8 @@ export default async function DashboardPage() {
             </div>
           ))}
         </div>
-
-        {/* Account info */}
-        <div
-          style={{
-            background: 'var(--color-glass)',
-            border: '1px solid var(--color-glass-border)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '1.5rem',
-            maxWidth: '480px',
-          }}
-        >
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--color-text-secondary)' }}>
-            Información de la cuenta
-          </h2>
-          <div style={{ display: 'grid', gap: '0.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-              <span style={{ color: 'var(--color-text-muted)' }}>ID de usuario</span>
-              <span style={{ color: 'var(--color-text-secondary)', fontFamily: 'monospace', fontSize: '0.75rem' }}>{user.id}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-              <span style={{ color: 'var(--color-text-muted)' }}>Correo</span>
-              <span style={{ color: 'var(--color-text-primary)' }}>{user.email}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-              <span style={{ color: 'var(--color-text-muted)' }}>Estado</span>
-              <span className="card-badge badge-active" style={{ marginTop: 0 }}>Verificado</span>
-            </div>
-          </div>
-        </div>
       </main>
     </div>
   )
 }
+

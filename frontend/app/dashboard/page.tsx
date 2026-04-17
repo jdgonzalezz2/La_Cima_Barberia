@@ -49,8 +49,8 @@ const MODULES = [
     icon: <BarChart3 className="w-6 h-6" />,
     title: 'Reportes',
     desc: 'Analytics en tiempo real.',
-    badge: 'Próximamente',
-    badgeClass: 'badge-coming',
+    badge: 'Activo',
+    badgeClass: 'badge-active',
   },
 ]
 
@@ -168,12 +168,14 @@ export default async function DashboardPage() {
             const isStaff = mod.title === 'Profesionales'
             const isServices = mod.title === 'Servicios'
             const isBooking = mod.title === 'Agendamiento'
-            const isClickable = isStaff || isServices || isBooking
+            const isAnalytics = mod.title === 'Reportes'
+            const isClickable = isStaff || isServices || isBooking || isAnalytics
             
             let linkHref = '#'
             if (isStaff) linkHref = '/dashboard/staff'
             if (isServices) linkHref = '/dashboard/services'
             if (isBooking) linkHref = '/dashboard/booking'
+            if (isAnalytics) linkHref = '/dashboard/analytics'
             
             const cardContent = (
               <div className={`dashboard-module-card ${isClickable ? 'clickable' : ''}`}>

@@ -25,10 +25,10 @@ const MODULES = [
   },
   {
     icon: '🧾',
-    title: 'POS & Facturación',
-    desc: 'Punto de venta integrado con historial de cobros vinculado directamente a las citas.',
-    badge: 'Próximamente',
-    badgeClass: 'badge-coming',
+    title: 'Catálogo de Servicios',
+    desc: 'Cortes, tratamientos y opciones reservables por tus clientes con precio y duración.',
+    badge: 'Activo',
+    badgeClass: 'badge-active',
   },
   {
     icon: '💰',
@@ -154,21 +154,24 @@ export default async function DashboardPage() {
         <div className="dashboard-grid">
           {MODULES.map((mod) => {
             const isStaff = mod.title === 'Gestión de Profesionales'
+            const isServices = mod.title === 'Catálogo de Servicios'
+            const isClickable = isStaff || isServices
+            const linkHref = isStaff ? '/dashboard/staff' : '/dashboard/services'
             
             const cardContent = (
-              <div className="dashboard-card" style={isStaff ? { cursor: 'pointer', border: '1px solid var(--color-primary)' } : {}}>
+              <div className="dashboard-card" style={isClickable ? { cursor: 'pointer', border: '1px solid var(--color-primary)' } : {}}>
                 <div className="card-icon-wrap">{mod.icon}</div>
                 <div className="card-title">{mod.title}</div>
                 <div className="card-desc">{mod.desc}</div>
-                <span className={`card-badge ${isStaff ? 'badge-active' : mod.badgeClass}`}>
-                  {isStaff ? 'Acceder' : mod.badge}
+                <span className={`card-badge ${isClickable ? 'badge-active' : mod.badgeClass}`}>
+                  {isClickable ? 'Acceder' : mod.badge}
                 </span>
               </div>
             )
 
-            if (isStaff) {
+            if (isClickable) {
               return (
-                <Link key={mod.title} href="/dashboard/staff" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link key={mod.title} href={linkHref} style={{ textDecoration: 'none', color: 'inherit' }}>
                   {cardContent}
                 </Link>
               )

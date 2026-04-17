@@ -39,13 +39,6 @@ const MODULES = [
     badgeClass: 'badge-active',
   },
   {
-    icon: <ShieldCheck className="w-6 h-6" />,
-    title: 'Autenticación',
-    desc: 'Protegido por InsForge SSR Sessions.',
-    badge: 'Activo',
-    badgeClass: 'badge-active',
-  },
-  {
     icon: <BarChart3 className="w-6 h-6" />,
     title: 'Reportes',
     desc: 'Analytics en tiempo real.',
@@ -84,7 +77,7 @@ export default async function DashboardPage() {
       <nav className="dashboard-nav">
         <div className="nav-logo">
           <div className="nav-logo-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Scissors size={20} strokeWidth={2.5}/>
+            <Scissors size={20} strokeWidth={2.5} />
           </div>
           <span className="nav-logo-name">Bookeiro</span>
         </div>
@@ -133,7 +126,7 @@ export default async function DashboardPage() {
                 {tenant.logo_url ? (
                   <img src={tenant.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
-                  <Scissors className="text-gray-400" size={32} opacity={0.6}/>
+                  <Scissors className="text-gray-400" size={32} opacity={0.6} />
                 )}
               </div>
               <div>
@@ -141,11 +134,11 @@ export default async function DashboardPage() {
                   {tenant.name}
                 </h2>
                 <a href={`/${tenant.slug}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
-                  Ir a bookeiro.com/{tenant.slug} <ArrowUpRight size={14}/>
+                  Ir a bookeiro.com/{tenant.slug} <ArrowUpRight size={14} />
                 </a>
               </div>
             </div>
-            
+
             <div style={{ display: 'flex', gap: '1rem' }}>
               <a href={`/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="btn btn-ghost" style={{ fontWeight: 500 }}>
                 Vitrina Pública
@@ -171,14 +164,14 @@ export default async function DashboardPage() {
             const isAnalytics = mod.title === 'Reportes'
             const isFinance = mod.title === 'Finanzas'
             const isClickable = isStaff || isServices || isBooking || isAnalytics || isFinance
-            
+
             let linkHref = '#'
             if (isStaff) linkHref = '/dashboard/staff'
             if (isServices) linkHref = '/dashboard/services'
             if (isBooking) linkHref = '/dashboard/booking'
             if (isAnalytics) linkHref = '/dashboard/analytics'
             if (isFinance) linkHref = '/dashboard/finance'
-            
+
             const cardContent = (
               <div className={`dashboard-module-card ${isClickable ? 'clickable' : ''}`}>
                 <div style={{

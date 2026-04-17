@@ -1,70 +1,82 @@
-# La Cima Barbería ✂️🏆
+# La Cima Barbería
 
-Sistema SaaS integral para la gestión de barberías premium. Incluye una aplicación cliente para reservas (PWA) y un panel administrativo completo con POS, gestión de barberos y reportes financieros.
+Sistema de gestión SaaS integral diseñado para barberías de alta gama. Esta plataforma permite la administración centralizada de múltiples sucursales, personal, servicios y un motor de reservas automatizado.
 
-## 🚀 Cómo Ejecutar el Proyecto
+## Descripción General
 
-Tienes dos formas de poner en marcha el sistema:
+La Cima Barbería es una solución multi-inquilino (multi-tenant) que moderniza la operación diaria de las barberías. Proporciona herramientas avanzadas tanto para los propietarios de negocios como para los profesionales (barberos) y los clientes finales, garantizando una experiencia fluida y profesional.
 
-### 1. Usando Docker (Recomendado) 🐳
-Esta es la forma más rápida, ya que configura la base de datos y ambos servicios automáticamente.
+## Características Principales
 
-1. Asegúrate de tener **Docker** y **Docker Compose** instalados.
-2. Ejecuta el siguiente comando en la raíz del proyecto:
-   ```bash
-   docker-compose up --build
-   ```
-3. El sistema estará disponible en las siguientes URLs:
-   - **Frontend (Cliente/Admin):** [http://localhost:3000](http://localhost:3000)
-   - **Backend API:** [http://localhost:4000](http://localhost:4000)
-   - **Base de Datos (Postgres):** Puerto `5433`
+### Gestión de Reservas
+- Motor de citas con detección automática de colisiones.
+- Generación dinámica de horarios disponibles basada en la jornada laboral del staff.
+- Proceso de reserva simplificado para el cliente final.
 
-### 2. Ejecución Local (Desarrollo) 💻
-Si prefieres correrlo sin Docker, necesitarás Node.js v18+ y PostgreSQL.
+### Panel Administrativo (Dashboard)
+- Analytics: Visualización de métricas de rendimiento y tendencias del negocio.
+- Gestión Financiera: Control detallado de ingresos, comisiones y saldos.
+- Administración de Personal: Gestión de perfiles, roles y servicios asignados a cada barbero.
+- Catálogo de Servicios: Configuración de precios base, duraciones y precios personalizados por profesional.
 
-1. **Configurar Base de Datos**: 
-   - Crea una base de datos llamada `lacima_db`.
-   - Copia `.env.example` a `.env` y ajusta las credenciales de tu DB.
-2. **Iniciar Backend**:
-   ```bash
-   cd backend
-   npm install
-   npm run dev
-   ```
-3. **Iniciar Frontend**:
+### Portal del Barbero
+- Interfaz dedicada para que los barberos consulten su agenda diaria.
+- Gestión de disponibilidad y seguimiento de sus propios servicios realizados.
+
+### Arquitectura Multi-tenant
+- Aislamiento total de datos entre diferentes organizaciones.
+- Soporte para múltiples locales bajo una misma infraestructura.
+
+## Pila Tecnológica
+
+- **Frontend**: Next.js 14 (App Router) utilizando TypeScript.
+- **Estilos**: Tailwind CSS para un diseño moderno y responsive.
+- **Componentes**: Lucide React para iconografía y Recharts para la visualización de datos.
+- **Backend y Base de Datos**: PostgreSQL gestionado a través de InsForge.
+- **Comunicación**: @insforge/sdk para la integración de datos y autenticación.
+- **Seguridad**: Row Level Security (RLS) implementado directamente en la base de datos para garantizar la integridad del aislamiento de datos.
+
+## Estructura del Proyecto
+
+El repositorio está organizado de la siguiente manera:
+
+- `/frontend`: Aplicación principal desarrollada en Next.js. Contiene todas las rutas, componentes y lógica de negocio de la interfaz de usuario.
+- `/migrations`: Scripts SQL que definen el esquema de la base de datos, incluyendo tablas, funciones RPC y políticas de seguridad.
+- `.insforge`: Archivos de configuración de la infraestructura backend.
+
+## Configuración y Ejecución Local
+
+Para poner en marcha el proyecto en un entorno de desarrollo, siga estos pasos:
+
+### Requisitos Previos
+- Node.js versión 18 o superior.
+- Gestor de paquetes npm o pnpm.
+
+### Instrucciones de Instalación
+1. Acceda al directorio del frontend:
    ```bash
    cd frontend
+   ```
+2. Instale las dependencias necesarias:
+   ```bash
    npm install
+   ```
+3. Configure las variables de entorno en un archivo `.env.local` dentro de la carpeta `/frontend`. Asegúrese de incluir las credenciales de InsForge:
+   - `NEXT_PUBLIC_INSFORGE_URL`
+   - `NEXT_PUBLIC_INSFORGE_ANON_KEY`
+4. Inicie el servidor de desarrollo:
+   ```bash
    npm run dev
    ```
 
----
+La aplicación estará disponible de forma predeterminada en `http://localhost:3000`.
 
-## 🔐 Acceso y Credenciales
+## Seguridad y Control de Acceso
 
-Una vez que la aplicación esté corriendo, puedes iniciar sesión con las siguientes cuentas de prueba:
+El sistema utiliza un modelo de Control de Acceso Basado en Roles (RBAC) asegurado por políticas RLS en la base de datos:
 
-| Rol | Usuario | Contraseña |
-| :--- | :--- | :--- |
-| **Administrador** | `admin@lacima.co` | `LaCima2024!` |
-| **Barbero (Ejemplo)** | `alejandro@lacima.co` | `barbero123` |
+- **Propietario (Owner)**: Tiene control total sobre su tenant, puede gestionar el personal, ver reportes financieros y configurar servicios.
+- **Barbero (Staff)**: Puede visualizar su propia agenda y gestionar sus citas.
+- **Cliente (Público)**: Tiene permisos para consultar servicios disponibles, perfiles de barberos y agendar citas.
 
-Para acceder al panel administrativo, ve a: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
-
----
-
-## 🛠️ Estructura del Proyecto
-
-- `/frontend`: Aplicación Next.js 14 (App Router).
-- `/backend`: API REST en Node.js + Express + PostgreSQL.
-- `docker-compose.yml`: Orquestación de contenedores para DB y servicios.
-- `WALKTHROUGH.md`: Notas detalladas sobre funcionalidades y arquitectura.
-
----
-
-## ✨ Características Principales
-- **Reservas en 4 pasos**: Selección de barbero, servicio, fecha y hora.
-- **PWA Ready**: Instalable en dispositivos móviles para una experiencia nativa.
-- **POS Integrado**: Gestión de cobros vinculada directamente a las citas.
-- **Dashboard Financiero**: Visualización de ingresos y comisiones de barberos en tiempo real.
-- **Gestión de Disponibilidad**: Motor automático de slots basado en horarios laborales.
+La autenticación se maneja de forma segura a través de los servicios de InsForge, soportando flujos modernos como Magic Links.

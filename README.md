@@ -2,6 +2,7 @@
 
 Sistema de gestión SaaS integral diseñado para barberías de alta gama. Esta plataforma permite la administración centralizada de múltiples sucursales, personal, servicios y un motor de reservas automatizado.
 
+<<<<<<< HEAD
 ## Descripción General
 
 La Cima Barbería es una solución multi-inquilino (multi-tenant) que moderniza la operación diaria de las barberías. Proporciona herramientas avanzadas tanto para los propietarios de negocios como para los profesionales (barberos) y los clientes finales, garantizando una experiencia fluida y profesional.
@@ -80,3 +81,15 @@ El sistema utiliza un modelo de Control de Acceso Basado en Roles (RBAC) asegura
 - **Cliente (Público)**: Tiene permisos para consultar servicios disponibles, perfiles de barberos y agendar citas.
 
 La autenticación se maneja de forma segura a través de los servicios de InsForge, soportando flujos modernos como Magic Links.
+=======
+## 🚀 Cómo Ejecutar el Proyecto
+   ```bash
+   npm run dev
+   ```
+## ✨ Características Principales
+- **Reservas en 4 pasos**: Selección de barbero, servicio, fecha y hora.
+- **PWA Ready**: Instalable en dispositivos móviles para una experiencia nativa.
+- **POS Integrado**: Gestión de cobros vinculada directamente a las citas.
+- **Dashboard Financiero**: Visualización de ingresos y comisiones de barberos en tiempo real.
+- **Gestión de Disponibilidad**: Motor automático de slots basado en horarios laborales.
+>>>>>>> 7e36b85dc45d44a45747bbe06fc976a41368612b

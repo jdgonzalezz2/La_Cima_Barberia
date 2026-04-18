@@ -5,41 +5,42 @@ import { getCurrentProfile } from '@/lib/auth'
 import { createInsForgeServerClient } from '@/lib/insforge-server'
 import { getAccessToken } from '@/lib/cookies'
 import { signOutAction } from './actions'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Calendar, Users, ListFilter, CreditCard, ShieldCheck, BarChart3, Scissors, LogOut, ArrowUpRight } from 'lucide-react'
 
 export const metadata: Metadata = { title: 'Dashboard' }
 
 const MODULES = [
   {
-    icon: <Calendar className="w-6 h-6" />,
+    icon: <Calendar className="w-6 h-6" strokeWidth={1.5} />,
     title: 'Agendamiento',
     desc: 'Prevención de colisiones y reservas automáticas',
     badge: 'Próximamente',
     badgeClass: 'badge-coming',
   },
   {
-    icon: <Users className="w-6 h-6" />,
+    icon: <Users className="w-6 h-6" strokeWidth={1.5} />,
     title: 'Profesionales',
     desc: 'Perfiles, comisiones y configuración estricta.',
     badge: 'Activo', // Actually linking to staff is active!
     badgeClass: 'badge-active',
   },
   {
-    icon: <ListFilter className="w-6 h-6" />,
+    icon: <ListFilter className="w-6 h-6" strokeWidth={1.5} />,
     title: 'Servicios',
     desc: 'Catálogo público con tarifas y ventanas de tiempo.',
     badge: 'Activo',
     badgeClass: 'badge-active',
   },
   {
-    icon: <CreditCard className="w-6 h-6" />,
+    icon: <CreditCard className="w-6 h-6" strokeWidth={1.5} />,
     title: 'Finanzas',
     desc: 'Liquidación automática pasarela.',
     badge: 'Activo',
     badgeClass: 'badge-active',
   },
   {
-    icon: <BarChart3 className="w-6 h-6" />,
+    icon: <BarChart3 className="w-6 h-6" strokeWidth={1.5} />,
     title: 'Reportes',
     desc: 'Analytics en tiempo real.',
     badge: 'Activo',
@@ -81,13 +82,18 @@ export default async function DashboardPage() {
           </div>
           <span className="nav-logo-name">Bookeiro</span>
         </div>
-        <div className="nav-user">
-          <div className="nav-user-info">
+        <div className="nav-user" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="nav-user-info" style={{ display: 'none' }}>
             <div className="nav-user-name">{profile.name ?? 'Usuario'}</div>
             <div className="nav-user-email">{profile.email}</div>
           </div>
+          {/* Using a cleaner user layout for all screens */}
+          <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--color-text-secondary)', marginRight: '0.5rem' }}>
+             {firstName}
+          </span>
+          <ThemeToggle />
           <form action={signOutAction}>
-            <button type="submit" className="btn btn-ghost btn-signout" title="Cerrar sesión" style={{ padding: '0.4rem' }}>
+            <button type="submit" className="btn btn-ghost btn-signout" title="Cerrar sesión" style={{ padding: '0.4rem', color: 'var(--color-text-secondary)' }}>
               <LogOut size={20} />
             </button>
           </form>
@@ -98,7 +104,7 @@ export default async function DashboardPage() {
       <main className="dashboard-content">
         <section className="dashboard-greeting">
           <h1 style={{ fontWeight: 800, letterSpacing: '-0.02em', fontSize: '2.5rem' }}>
-            Bienvenido, <span style={{ color: 'var(--color-primary)' }}>{firstName}</span>.
+            ¡Hola, <span style={{ color: 'var(--color-primary)' }}>{firstName}</span>!
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '1.1rem', marginTop: '0.5rem' }}>Tu centro de mando operativo se encuentra activo y protegido.</p>
         </section>
@@ -154,7 +160,7 @@ export default async function DashboardPage() {
         <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--color-text-secondary)', letterSpacing: '-0.01em' }}>Módulos del Ecosistema</h3>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
           gap: '1.5rem'
         }}>
           {MODULES.map((mod) => {
@@ -175,8 +181,8 @@ export default async function DashboardPage() {
             const cardContent = (
               <div className={`dashboard-module-card ${isClickable ? 'clickable' : ''}`}>
                 <div style={{
-                  width: '48px', height: '48px', borderRadius: '12px', background: isClickable ? 'rgba(201, 168, 76, 0.1)' : 'var(--color-bg-elevated)',
-                  color: isClickable ? 'var(--color-primary)' : 'var(--color-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', border: isClickable ? '1px solid rgba(201,168,76,0.2)' : 'none'
+                  width: '56px', height: '56px', borderRadius: '16px', background: isClickable ? 'rgba(201, 168, 76, 0.08)' : 'var(--color-bg-base)',
+                  color: isClickable ? 'var(--color-primary)' : 'var(--color-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', border: isClickable ? '1px solid rgba(201,168,76,0.15)' : '1px solid var(--color-border)', boxShadow: isClickable ? 'inset 0 1px 0 rgba(255,255,255,0.05)' : 'none'
                 }}>
                   {mod.icon}
                 </div>

@@ -289,6 +289,11 @@ a {
   color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
   letter-spacing: 0.02em;
+  transition: color var(--transition-fast);
+}
+
+.dark .form-label {
+  color: #c0c0c8; /* Brighter accent for dark mode labels */
 }
 
 /* PhoneInput-2 Overrides */
@@ -400,7 +405,7 @@ a {
 .form-input:focus {
   border-color: var(--color-border-focus);
   background: var(--color-bg-surface);
-  box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+  box-shadow: 0 0 15px rgba(201,168,76,0.15), 0 0 0 3px rgba(201,168,76,0.05);
 }
 
 .form-input.error {
@@ -420,6 +425,7 @@ a {
 .dark .form-input:focus {
   background: rgba(255, 255, 255, 0.02);
   border-color: var(--color-primary);
+  box-shadow: 0 0 20px rgba(201,168,76,0.2);
 }
 
 /* OTP Input */
@@ -1066,17 +1072,17 @@ a {
   background: var(--color-glass);
   border: 1px solid var(--color-glass-border);
   border-radius: var(--radius-lg);
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   box-shadow: var(--shadow-sm);
 }
 
 .settings-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1.25rem 1rem;
 }
 
 @media (max-width: 800px) {
@@ -1099,3 +1105,4 @@ a {
   border-color: var(--color-primary);
   box-shadow: 0 10px 40px -10px rgba(201,168,76,0.15);
 }
+

@@ -25,7 +25,7 @@ export default async function SettingsServerWrapper() {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '4rem' }}>
-      <header style={{ marginBottom: '2.5rem' }}>
+      <header style={{ marginBottom: '1.25rem' }}>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700, color: 'var(--color-text-primary)', letterSpacing: '-0.02em', marginBottom: '0.4rem' }}>
           Personalizar Sitio
         </h1>

@@ -596,6 +596,8 @@
   color: var(--ink-soft);
   line-height: 1.55;
   margin-top: auto;
+  padding-right: 95px;
+  max-width: 90%;
 }
 
 /* Decorative mini chart */

@@ -49,6 +49,7 @@ export async function createTenantAction(
         name,
         slug,
         phone,
+        whatsapp: phone,
         owner_id: user.id
       }])
       .select()

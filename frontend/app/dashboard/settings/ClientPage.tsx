@@ -38,8 +38,11 @@ export default function ClientPage({ tenant }: { tenant: any }) {
     tags: (tenant?.tags || []).join(', '),
     map_url: tenant?.map_url || '',
     instagram: tenant?.instagram || '',
+    facebook: tenant?.facebook || '',
+    tiktok: tenant?.tiktok || '',
     whatsapp: tenant?.whatsapp || '',
     address: tenant?.address || '',
+    phone: tenant?.phone || '',
   })
 
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
@@ -417,6 +420,14 @@ export default function ClientPage({ tenant }: { tenant: any }) {
                   <span style={{ padding: '0.75rem 1rem', color: 'var(--color-text-muted)', borderRight: '1px solid var(--color-border)' }}>@</span>
                   <input type="text" name="instagram" value={formData.instagram} onChange={handleTextChange} placeholder="tubarberia" style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', padding: '0.75rem', color: 'var(--color-text-primary)' }} />
                 </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Facebook (URL)</label>
+                <input type="url" name="facebook" value={formData.facebook} onChange={handleTextChange} className="form-input" placeholder="https://facebook.com/..." />
+              </div>
+              <div className="form-group">
+                <label className="form-label">TikTok (URL)</label>
+                <input type="url" name="tiktok" value={formData.tiktok} onChange={handleTextChange} className="form-input" placeholder="https://tiktok.com/@..." />
               </div>
               <div className="form-group">
                 <label className="form-label">Línea WhatsApp</label>

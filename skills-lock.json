@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "9e1c8b3103f92fa8092568a44fe64858de7c5c9dc65ce4bea8f168080e889cfd"
     },
+    "frontend-design": {
+      "source": "anthropics/claude-code",
+      "sourceType": "github",
+      "computedHash": "d39adf3a983de7dafc75991590d54f091755f7e4163d5a5ed085ecd719157184"
+    },
     "insforge": {
       "source": "insforge/agent-skills",
       "sourceType": "github",

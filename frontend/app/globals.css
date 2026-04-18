@@ -368,6 +368,20 @@ a {
   box-shadow: 0 0 0 3px rgba(255,77,109,0.1);
 }
 
+.dark .form-input {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.dark .form-input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark .form-input:focus {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--color-primary);
+}
+
 /* OTP Input */
 .otp-inputs {
   display: flex;
@@ -496,6 +510,10 @@ a {
 .alert-error {
   background: var(--color-error-bg);
   border: 1px solid rgba(255,77,109,0.2);
+  color: #ff4d6d;
+}
+
+.dark .alert-error {
   color: #ff8fa3;
 }
 

@@ -5,6 +5,7 @@ import { createTenantAction } from './actions'
 import { Scissors } from 'lucide-react'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export default function OnboardingPage() {
   const [state, formAction, isPending] = useActionState(createTenantAction, null)
@@ -48,6 +49,9 @@ export default function OnboardingPage() {
 
       {/* ── Right: Form ── */}
       <div className="auth-form-panel">
+        <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem' }}>
+          <ThemeToggle />
+        </div>
         <div className="auth-card" style={{ maxWidth: '500px' }}>
           <div className="auth-card-header">
             <h1 className="auth-card-title">Crea tu Barbería</h1>

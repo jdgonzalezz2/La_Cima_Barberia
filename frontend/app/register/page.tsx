@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useTransition } from 'react'
 import Link from 'next/link'
 import { signUpAction, verifyEmailAction, resendVerificationAction } from './actions'
 import { Scissors, Mail } from 'lucide-react'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 type SignUpState = {
   error?: string
@@ -104,6 +105,9 @@ export default function RegisterPage() {
 
       {/* ── Right: Form ── */}
       <div className="auth-form-panel">
+        <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem' }}>
+          <ThemeToggle />
+        </div>
         <div className="auth-card">
           {!showOTP ? (
             /* ── Register Form ── */

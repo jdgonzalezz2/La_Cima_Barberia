@@ -372,7 +372,7 @@
   color: var(--ink-whisper);
   margin-bottom: 0.85rem;
 }
-.ln-card-2 .ln-bc-head { color: rgba(255,255,255,0.5); }
+.ln-card-2 .ln-bc-head { color: var(--ink-whisper); opacity: 0.8; }
 .ln-bc-service {
   font-family: var(--font-display);
   font-size: 1.25rem;
@@ -382,7 +382,7 @@
   margin-bottom: 0.3rem;
 }
 .ln-bc-client { font-size: 0.88rem; color: var(--ink-soft); }
-.ln-card-2 .ln-bc-client { color: rgba(255,255,255,0.65); }
+.ln-card-2 .ln-bc-client { color: var(--ink-soft); }
 
 .ln-bc-foot {
   display: flex;
@@ -393,14 +393,14 @@
   border-top: 1px dashed var(--line);
   font-size: 0.85rem;
 }
-.ln-card-2 .ln-bc-foot { border-top-color: rgba(255,255,255,0.12); }
+.ln-card-2 .ln-bc-foot { border-top-color: var(--line); }
 .ln-bc-barber {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   color: var(--ink-soft);
 }
-.ln-card-2 .ln-bc-barber { color: rgba(255,255,255,0.7); }
+.ln-card-2 .ln-bc-barber { color: var(--ink-soft); }
 .ln-bc-avatar {
   width: 22px; height: 22px;
   border-radius: 50%;
@@ -408,14 +408,14 @@
   border: 2px solid var(--bg);
   flex-shrink: 0;
 }
-.ln-card-2 .ln-bc-avatar { border-color: var(--ink); }
+.ln-card-2 .ln-bc-avatar { border-color: var(--line); }
 .ln-bc-price {
   font-family: var(--font-display);
   font-weight: 500;
   font-size: 1rem;
   color: var(--gold-deep);
 }
-.ln-card-2 .ln-bc-price { color: var(--gold-light); }
+.ln-card-2 .ln-bc-price { color: var(--gold-deep); }
 
 @keyframes ln-float-in {
   from { opacity: 0; transform: translateY(24px) rotate(0deg); }

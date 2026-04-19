@@ -1106,3 +1106,25 @@ a {
   box-shadow: 0 10px 40px -10px rgba(201,168,76,0.15);
 }
 
+/* ============================================================
+   STOREFRONT PREMIUM STYLES
+   ============================================================ */
+.store-service-card {
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+.store-service-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+}
+
+.btn-reservar-vitrina {
+  transition: all 0.3s ease !important;
+}
+
+.btn-reservar-vitrina:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px var(--color-primary-dark) !important;
+}
+

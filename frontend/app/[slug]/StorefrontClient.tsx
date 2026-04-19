@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import BookingModal from './BookingModal'
-import { Camera, Globe, Phone, MessageCircle, Video, MapPin, Clock, Share2 } from 'lucide-react'
+import { Camera, Globe, Phone, MessageCircle, Video, MapPin, Clock, Share2, Scissors, Sparkles } from 'lucide-react'
 
 export default function StorefrontClient({ tenant, primaryColor, fontVar, services, staffList, reviews }: {
   tenant: any, primaryColor: string, fontVar: string, services: any[], staffList: any[], reviews: any[]
@@ -206,25 +206,121 @@ export default function StorefrontClient({ tenant, primaryColor, fontVar, servic
 
   const ServicesList = () => (
     <div style={{ marginBottom: '4rem' }}>
-      <h2 style={{ fontSize: '1.6rem', fontWeight: 700, marginBottom: '1.5rem' }}>Servicios</h2>
-      <div style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+        <Sparkles size={20} style={{ color: 'var(--color-primary)' }} />
+        <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>Servicios</h2>
+      </div>
+
+      <div style={{ 
+        display: 'flex', 
+        gap: '1.5rem', 
+        overflowX: 'auto', 
+        paddingBottom: '2rem',
+        paddingLeft: '0.5rem',
+        paddingRight: '0.5rem',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}>
         {services.map(s => (
-          <div key={s.id} style={{ ...cardStyle, minWidth: '280px', flex: '0 0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
+          <div 
+            key={s.id} 
+            className="store-service-card"
+            style={{ 
+              ...cardStyle, 
+              minWidth: '230px', 
+              flex: '0 0 auto', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'space-between',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)',
+              cursor: 'default',
+              padding: '1.25rem'
+            }}
+          >
+            {/* Decorative Icon Background */}
+            <div style={{ 
+              position: 'absolute', 
+              top: '-5px', 
+              right: '-5px', 
+              opacity: 0.05, 
+              color: 'var(--color-primary)',
+              transform: 'rotate(-15deg)',
+              pointerEvents: 'none'
+            }}>
+              <Scissors size={60} strokeWidth={1} />
+            </div>
+
+            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                <div style={{ width: 50, height: 50, borderRadius: '8px', background: 'var(--color-glass)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>👤</div>
-                <span style={{ background: 'var(--color-glass)', color: 'var(--color-primary)', padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 600, border: '1px solid var(--color-primary)' }}>🔥 Popular</span>
+                <div style={{ 
+                  width: 40, height: 40, borderRadius: '10px', 
+                  background: 'var(--color-bg-base)', color: 'var(--color-primary)', 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                  fontSize: '1.2rem', border: '1px solid var(--color-border)',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
+                }}>
+                  <Scissors size={20} strokeWidth={1.5} />
+                </div>
+                <span style={{ 
+                  background: 'rgba(212, 175, 55, 0.15)', 
+                  color: 'var(--color-primary)', 
+                  padding: '0.3rem 0.6rem', 
+                  borderRadius: '10px', 
+                  fontSize: '0.65rem', 
+                  fontWeight: 700, 
+                  letterSpacing: '0.05em',
+                  border: '1px solid rgba(212, 175, 55, 0.2)' 
+                }}>
+                  POPULAR
+                </span>
               </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.2rem' }}>{s.name}</h3>
-              <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '0.8rem', minHeight: '35px' }}>{s.description?.substring(0,60) || '(precio varía según barbero)'}</div>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.4rem', fontFamily: 'var(--font-display)' }}>{s.name}</h3>
+              <p style={{ 
+                fontSize: '0.85rem', 
+                color: 'var(--color-text-secondary)', 
+                marginBottom: '1rem', 
+                minHeight: '2.5em',
+                lineHeight: 1.4 
+              }}>
+                {s.description || 'Experiencia premium garantizada por nuestros profesionales.'}
+              </p>
             </div>
             
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '1rem', marginTop: 'auto' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              borderTop: '1px solid var(--color-glass-border)', 
+              paddingTop: '1.5rem', 
+              marginTop: 'auto',
+              position: 'relative',
+              zIndex: 1 
+            }}>
               <div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{s.duration_mins} min</div>
-                <div style={{ fontWeight: 700, fontSize: '1rem' }}>${s.base_price}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Clock size={14} /> {s.duration_mins} min
+                </div>
+                <div style={{ fontWeight: 800, fontSize: '1.4rem', color: 'var(--color-text-primary)', marginTop: '0.2rem' }}>
+                  ${Number(s.base_price).toLocaleString()}
+                </div>
               </div>
-              <button onClick={() => openBooking(s.id)} style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}>
+              <button 
+                onClick={() => openBooking(s.id)} 
+                className="btn-reservar-vitrina"
+                style={{ 
+                  background: 'var(--color-primary)', 
+                  color: '#fff', 
+                  border: 'none', 
+                  padding: '0.8rem 1.75rem', 
+                  borderRadius: '14px', 
+                  fontWeight: 700, 
+                  cursor: 'pointer',
+                  boxShadow: `0 8px 16px ${primaryColor}44`,
+                  transition: 'all 0.3s ease'
+                }}
+              >
                 Reservar
               </button>
             </div>

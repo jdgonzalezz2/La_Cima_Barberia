@@ -17,128 +17,153 @@ export default async function WorkerDashboardPage() {
     redirect('/dashboard')
   }
 
-  const accessToken = await getAccessToken()
-  const insforge = createInsForgeServerClient(accessToken)
-
-  // 1. Get my staff profile
-  const { data: myStaffRecord } = await insforge.database
-    .from('staff')
-    .select('id, name, avatar_url, tenant_id')
-    .eq('user_id', profile.id)
-    .single()
-
-  if (!myStaffRecord) {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Error: Registro de empleado no vinculado correctamente. Contacta al administrador.</div>
+  // helper for robust YYYY-MM-DD formatting independent of locale
+  const toISODate = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
-  const { data: tenant } = await insforge.database
-    .from('tenants')
-    .select('name, logo_url')
-    .eq('id', profile.tenant_id)
-    .single()
+  // helper for robust HH:MM formatting
+  const toTimeStr = (d: Date) => {
+    return d.toLocaleTimeString('es-CO', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false // Force 24h for consistency if needed, or keep for local feel
+    });
+  }
 
-  // 2. Fetch today's and future appointments for this staff
-  const todayStart = new Date()
-  todayStart.setHours(0, 0, 0, 0)
-  const todayStartIso = todayStart.toISOString()
-  
-  const { data: appointments, error } = await insforge.database
-    .from('appointments')
-    .select('id, tenant_id, service_id, customer_name, customer_phone, start_time, end_time, total_price, status, services(name, duration_mins)')
-    .eq('staff_id', myStaffRecord.id)
-    .gte('start_time', todayStartIso)
-    .order('start_time', { ascending: true })
+  try {
+    const accessToken = await getAccessToken()
+    const insforge = createInsForgeServerClient(accessToken)
 
-  if (error) console.error('Error fetching appointments:', error)
+    // 1. Get my staff profile
+    const { data: myStaffRecord, error: staffError } = await insforge.database
+      .from('staff')
+      .select('id, name, avatar_url, tenant_id')
+      .eq('user_id', profile.id)
+      .single()
 
-  const todayStr = new Date().toLocaleDateString('en-CA') // YYYY-MM-DD
-  
-  // Format the appointments locally to match UI expectations
-  const formattedAppointments = (appointments || []).map(a => {
-    const d = new Date(a.start_time)
-    return {
-      ...a,
-      appointment_date: d.toLocaleDateString('en-CA'),
-      start_time_str: d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
-      base_price: a.total_price // The column is total_price in DB
+    if (staffError || !myStaffRecord) {
+      console.error('Staff record error:', staffError)
+      return <div style={{ padding: '2rem', textAlign: 'center' }}>Error: Registro de empleado no vinculado correctamente. Contacta al administrador.</div>
     }
-  })
 
-  // Stats for today
-  const todayAppointments = formattedAppointments.filter(a => a.appointment_date === todayStr)
-  const todayTotal = todayAppointments.reduce((acc, curr) => acc + Number(curr.base_price || 0), 0)
+    const { data: tenant, error: tenantError } = await insforge.database
+      .from('tenants')
+      .select('name, logo_url')
+      .eq('id', profile.tenant_id)
+      .single()
 
-  return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '1.5rem 0.5rem 4rem' }}>
-      
-      {/* ── Premium Hero Section ── */}
-      <div style={{
-        background: 'linear-gradient(135deg, #111118 0%, #16161f 100%)', 
-        border: '1px solid var(--color-glass-border)',
-        borderRadius: '28px', 
-        padding: '3rem', 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: '2.5rem', 
-        marginBottom: '3rem',
-        boxShadow: 'var(--shadow-lg)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {/* Dynamic Mesh Background */}
-        <div style={{ 
-          position: 'absolute', top: '-20%', right: '-10%', width: '300px', height: '300px', 
-          background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)', 
-          filter: 'blur(40px)', zIndex: 0
-        }} />
-        <div style={{ 
-          position: 'absolute', bottom: '-20%', left: '-5%', width: '250px', height: '250px', 
-          background: 'radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)', 
-          filter: 'blur(30px)', zIndex: 0
-        }} />
+    if (tenantError) console.error('Tenant fetch error:', tenantError);
 
-        {/* Profile Card Overlay */}
-        <div style={{ 
-          position: 'relative',
-          zIndex: 1,
-          width: 100, height: 100, borderRadius: '24px', 
-          background: 'var(--gradient-brand)', 
-          display: 'flex', alignItems: 'center', justifyContent: 'center', 
-          boxShadow: 'var(--shadow-gold)',
-          flexShrink: 0,
-          transform: 'rotate(-3deg)'
-        }}>
-          {myStaffRecord?.avatar_url ? (
-            <img src={myStaffRecord.avatar_url} style={{ width: '92%', height: '92%', borderRadius: '22px', objectFit: 'cover' }} />
-          ) : (
-            <UserRound size={48} style={{ color: '#111' }} />
-          )}
-        </div>
+    // 2. Fetch today's and future appointments for this staff
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    const todayStartIso = todayStart.toISOString()
+    
+    const { data: appointments, error: appointmentsError } = await insforge.database
+      .from('appointments')
+      .select('id, tenant_id, service_id, customer_name, customer_phone, start_time, end_time, total_price, status, services(name, duration_mins)')
+      .eq('staff_id', myStaffRecord.id)
+      .gte('start_time', todayStartIso)
+      .order('start_time', { ascending: true })
+
+    if (appointmentsError) console.error('Error fetching appointments:', appointmentsError)
+
+    const todayStr = toISODate(new Date())
+    
+    // Format the appointments locally to match UI expectations
+    const formattedAppointments = (appointments || []).map(a => {
+      const d = new Date(a.start_time)
+      return {
+        ...a,
+        appointment_date: toISODate(d),
+        start_time_str: toTimeStr(d),
+        base_price: a.total_price // The column is total_price in DB
+      }
+    })
+
+    // Stats for today
+    const todayAppointments = formattedAppointments.filter(a => a.appointment_date === todayStr)
+    const todayTotal = todayAppointments.reduce((acc, curr) => acc + Number(curr.base_price || 0), 0)
+
+    const currentDateLabel = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long' })
+    const currentWeekdayLabel = new Date().toLocaleDateString('es-CO', { weekday: 'long' })
+
+    return (
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '1.5rem 0.5rem 4rem' }}>
         
-        <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-            <span style={{ 
-              fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', 
-              letterSpacing: '0.15em', background: 'rgba(201,168,76,0.15)', 
-              color: 'var(--color-primary)', padding: '0.4rem 1rem', borderRadius: '100px',
-              border: '1px solid rgba(201,168,76,0.2)'
-            }}>
-              Portal Professional
-            </span>
+        {/* ── Premium Hero Section ── */}
+        <div style={{
+          background: 'linear-gradient(135deg, #111118 0%, #16161f 100%)', 
+          border: '1px solid var(--color-glass-border)',
+          borderRadius: '28px', 
+          padding: '3rem', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '2.5rem', 
+          marginBottom: '3rem',
+          boxShadow: 'var(--shadow-lg)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          {/* Dynamic Mesh Background */}
+          <div style={{ 
+            position: 'absolute', top: '-20%', right: '-10%', width: '300px', height: '300px', 
+            background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)', 
+            filter: 'blur(40px)', zIndex: 0
+          }} />
+          <div style={{ 
+            position: 'absolute', bottom: '-20%', left: '-5%', width: '250px', height: '250px', 
+            background: 'radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)', 
+            filter: 'blur(30px)', zIndex: 0
+          }} />
+
+          {/* Profile Card Overlay */}
+          <div style={{ 
+            position: 'relative',
+            zIndex: 1,
+            width: 100, height: 100, borderRadius: '24px', 
+            background: 'var(--gradient-brand)', 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', 
+            boxShadow: 'var(--shadow-gold)',
+            flexShrink: 0,
+            transform: 'rotate(-3deg)'
+          }}>
+            {myStaffRecord?.avatar_url ? (
+              <img src={myStaffRecord.avatar_url} style={{ width: '92%', height: '92%', borderRadius: '22px', objectFit: 'cover' }} />
+            ) : (
+              <UserRound size={48} style={{ color: '#111' }} />
+            )}
           </div>
-          <h1 style={{ fontSize: '2.75rem', fontWeight: 800, margin: 0, letterSpacing: '-0.04em', color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}>
-            ¡Qué bueno verte, <span style={{ background: 'var(--gradient-brand)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{myStaffRecord!.name.split(' ')[0]}</span>!
-          </h1>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: '1.15rem', marginTop: '0.75rem', fontWeight: 400 }}>
-            Tienes un gran día por delante en <strong style={{color: 'var(--color-text-primary)'}}>{tenant?.name}</strong>.
-          </p>
+          
+          <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <span style={{ 
+                fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', 
+                letterSpacing: '0.15em', background: 'rgba(201,168,76,0.15)', 
+                color: 'var(--color-primary)', padding: '0.4rem 1rem', borderRadius: '100px',
+                border: '1px solid rgba(201,168,76,0.2)'
+              }}>
+                Portal Professional
+              </span>
+            </div>
+            <h1 style={{ fontSize: '2.75rem', fontWeight: 800, margin: 0, letterSpacing: '-0.04em', color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}>
+              ¡Qué bueno verte, <span style={{ background: 'var(--gradient-brand)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{myStaffRecord.name.split(' ')[0]}</span>!
+            </h1>
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: '1.15rem', marginTop: '0.75rem', fontWeight: 400 }}>
+              Tienes un gran día por delante en <strong style={{color: 'var(--color-text-primary)'}}>{tenant?.name || 'la barbería'}</strong>.
+            </p>
+          </div>
+
+          <div style={{ position: 'relative', zIndex: 1, textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+             <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>{currentDateLabel}</div>
+             <div style={{ fontSize: '0.9rem', color: 'var(--color-primary)', fontWeight: 600, textTransform: 'capitalize' }}>{currentWeekdayLabel}</div>
+          </div>
         </div>
 
-        <div style={{ position: 'relative', zIndex: 1, textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-           <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>{new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long' })}</div>
-           <div style={{ fontSize: '0.9rem', color: 'var(--color-primary)', fontWeight: 600, textTransform: 'capitalize' }}>{new Date().toLocaleDateString('es-CO', { weekday: 'long' })}</div>
-        </div>
-      </div>
 
       {/* ── Glass Stats Grid ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
@@ -225,16 +250,6 @@ export default async function WorkerDashboardPage() {
                 boxShadow: isToday ? '0 10px 40px rgba(201,168,76,0.06)' : 'none',
                 overflow: 'hidden'
               }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = 'var(--color-primary)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'var(--color-border)';
-                e.currentTarget.style.boxShadow = isToday ? '0 10px 40px rgba(201,168,76,0.06)' : 'none';
-              }}
               >
                 {/* Time Indicator with Dot */}
                 <div style={{ textAlign: 'center', minWidth: '90px', position: 'relative' }}>
@@ -297,5 +312,22 @@ export default async function WorkerDashboardPage() {
         </div>
       )}
     </div>
-  )
+    );
+    } catch (err) {
+    console.error('Fatal error in worker dashboard:', err)
+    return (
+      <div style={{ 
+        padding: '4rem 2rem', textAlign: 'center', background: 'var(--color-bg-card)', 
+        borderRadius: '32px', margin: '2rem auto', maxWidth: '600px', border: '1px solid var(--color-border)' 
+      }}>
+        <h2 style={{ color: 'var(--color-text-primary)', marginBottom: '1rem' }}>Algo salió mal</h2>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>
+          No pudimos cargar tu agenda en este momento. Por favor, intenta recargar la página.
+        </p>
+        <Link href="/dashboard" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
+          Volver al Inicio
+        </Link>
+      </div>
+    )
+  }
 }

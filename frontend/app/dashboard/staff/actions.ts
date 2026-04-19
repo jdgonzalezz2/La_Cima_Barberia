@@ -152,3 +152,33 @@ export async function saveWorkingHoursAction(staffId: string, hours: any[]) {
     return { error: err.message }
   }
 }
+
+export async function deleteStaffAction(staffId: string) {
+  try {
+    const { insforge, tenantId } = await getClientAndTenant()
+    
+    // Authorization: ONLY owner can delete staff
+    const profile = await getCurrentProfile()
+    if (!profile) throw new Error('Not authenticated')
+
+    const { data: tenant } = await insforge.database.from('tenants').select('owner_id').eq('id', tenantId).single()
+    if (tenant?.owner_id !== profile.id) {
+      return { error: 'No autorizado para borrar personal. Solo el administrador puede hacerlo.' }
+    }
+
+    // Since database has CASCADE enabled for appointments, working_hours, and staff_services,
+    // we don't need to manually delete them. A single delete on 'staff' will suffice.
+    const { error } = await insforge.database
+      .from('staff')
+      .delete()
+      .eq('id', staffId)
+      .eq('tenant_id', tenantId)
+
+    if (error) return { error: error.message }
+
+    revalidatePath('/dashboard/staff')
+    return { success: true }
+  } catch (err: any) {
+    return { error: err.message }
+  }
+}

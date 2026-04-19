@@ -10,6 +10,7 @@ export default function StorefrontClient({ tenant, primaryColor, fontVar, servic
   const [modalOpen, setModalOpen] = useState(false)
   const [initialServiceId, setInitialServiceId] = useState<string|undefined>()
   const [initialStaffId, setInitialStaffId] = useState<string|undefined>()
+  const [selectedStaffForProfile, setSelectedStaffForProfile] = useState<any|null>(null)
 
   const isLight = tenant.theme === 'light' || !tenant.theme
 
@@ -34,6 +35,11 @@ export default function StorefrontClient({ tenant, primaryColor, fontVar, servic
     setInitialServiceId(serviceId)
     setInitialStaffId(staffId)
     setModalOpen(true)
+    setSelectedStaffForProfile(null) // Close profile if open
+  }
+
+  const openProfile = (staff: any) => {
+    setSelectedStaffForProfile(staff)
   }
 
   // Helper Card Style Booksy-like
@@ -230,18 +236,158 @@ export default function StorefrontClient({ tenant, primaryColor, fontVar, servic
 
   const StaffListGroup = () => (
     <div style={{ marginBottom: '4rem' }}>
-      <h2 style={{ fontSize: '1.6rem', fontWeight: 700, marginBottom: '1.5rem' }}>Colaboradores</h2>
-      <div style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1rem' }}>
-        {staffList.map(st => (
-          <div key={st.id} onClick={() => openBooking(undefined, st.id)} style={{ ...cardStyle, minWidth: '160px', flex: '0 0 auto', textAlign: 'center', cursor: 'pointer', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseOut={e => e.currentTarget.style.transform = 'none'}>
-            <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--color-border)', margin: '0 auto 1rem', overflow: 'hidden', padding: '3px', border: `2px solid var(--color-primary)` }}>
-              {st.avatar_url ? <img src={st.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} alt="Staff" /> : <div style={{width:'100%',height:'100%',borderRadius:'50%',background:'var(--color-bg-base)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.8rem'}}>🧑</div>}
+      <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '2rem', letterSpacing: '-0.02em' }}>Nuestros Profesionales</h2>
+      <div style={{ 
+        display: 'flex', 
+        gap: '1.75rem', 
+        overflowX: 'auto', 
+        paddingBottom: '2rem', 
+        paddingLeft: '0.5rem',
+        paddingRight: '0.5rem',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}>
+        {staffList.map(st => {
+          const initials = st.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
+          
+          return (
+            <div 
+              key={st.id} 
+              onClick={() => openProfile(st)} 
+              style={{ 
+                ...cardStyle, 
+                minWidth: '260px', 
+                flex: '0 0 auto', 
+                textAlign: 'center', 
+                cursor: 'pointer', 
+                transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)',
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }} 
+              onMouseOver={e => {
+                e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+                e.currentTarget.style.borderColor = 'var(--color-primary)';
+              }} 
+              onMouseOut={e => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = isLight ? '0 4px 6px -1px rgba(0, 0, 0, 0.05)' : 'none';
+                e.currentTarget.style.borderColor = 'var(--color-border)';
+              }}
+            >
+              {/* Avatar Container */}
+              <div style={{ 
+                width: 110, 
+                height: 110, 
+                borderRadius: '50%', 
+                background: 'var(--color-bg-base)', 
+                marginBottom: '1.5rem', 
+                overflow: 'hidden', 
+                padding: '4px', 
+                border: `2px solid var(--color-primary-muted)`,
+                boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {st.avatar_url ? (
+                  <img src={st.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} alt={st.name} />
+                ) : (
+                  <div style={{
+                    width: '100%', 
+                    height: '100%', 
+                    borderRadius: '50%', 
+                    background: 'linear-gradient(135deg, var(--color-bg-muted) 0%, var(--color-border) 100%)', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    fontSize: '1.8rem',
+                    fontWeight: 700,
+                    color: 'var(--color-text-primary)',
+                    letterSpacing: '0.05em'
+                  }}>
+                    {initials}
+                  </div>
+                )}
+              </div>
+
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--color-text-primary)' }}>{st.name}</h3>
+              
+              {/* Specialty Badge */}
+              <div style={{ 
+                fontSize: '0.7rem', 
+                color: 'var(--color-primary)', 
+                fontWeight: 700, 
+                letterSpacing: '0.08em',
+                marginBottom: '1rem',
+                textTransform: 'uppercase',
+                background: 'rgba(201,168,76,0.1)',
+                padding: '0.35rem 0.8rem',
+                borderRadius: '20px',
+                border: '1px solid rgba(201,168,76,0.15)'
+              }}>
+                {st.specialty || 'Profesional'}
+              </div>
+
+              {st.bio && (
+                <p style={{ 
+                  fontSize: '0.85rem', 
+                  color: 'var(--color-text-secondary)', 
+                  lineHeight: 1.5, 
+                  marginBottom: '1.5rem',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  minHeight: '3em',
+                  padding: '0 0.5rem'
+                }}>
+                  {st.bio}
+                </p>
+              )}
+
+              {/* Bottom Row: Rating & Social */}
+              <div style={{ 
+                marginTop: 'auto', 
+                width: '100%', 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                gap: '1.25rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid var(--color-glass-border)'
+              }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <span style={{ color: '#f59e0b', fontSize: '1.1rem' }}>★</span> 5.0
+                </div>
+                
+                {st.instagram && (
+                  <>
+                    <div style={{ width: '1px', height: '14px', background: 'var(--color-border)' }} />
+                    <a 
+                      href={`https://instagram.com/${st.instagram.replace('@','')}`} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ 
+                        color: 'var(--color-text-secondary)', 
+                        display: 'flex', 
+                        alignItems: 'center',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text-secondary)'}
+                    >
+                      <BrandIcon name="instagram" size={20} />
+                    </a>
+                  </>
+                )}
+              </div>
             </div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.2rem' }}>{st.name}</h3>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '0.5rem' }}>Barbero</div>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>⭐ 5.0</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   )
@@ -306,6 +452,105 @@ export default function StorefrontClient({ tenant, primaryColor, fontVar, servic
         initialServiceId={initialServiceId} initialStaffId={initialStaffId}
         services={services} staffList={staffList}
       />
+
+      {/* Staff Profile Modal */}
+      {selectedStaffForProfile && (
+        <div 
+          onClick={() => setSelectedStaffForProfile(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 10000,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', padding: '1rem',
+            animation: 'fadeIn 0.3s ease-out',
+            cursor: 'zoom-out'
+          }}
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{ 
+              width: '100%', maxWidth: 500, background: 'var(--color-bg-base)', 
+              border: '1px solid var(--color-border)', borderRadius: '24px', 
+              overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
+              position: 'relative', animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: 'default'
+            }}
+          >
+            <button 
+              onClick={() => setSelectedStaffForProfile(null)} 
+              style={{ 
+                position: 'absolute', top: '1.25rem', right: '1.25rem', 
+                background: 'rgba(0,0,0,0.3)', border: 'none', borderRadius: '50%', 
+                width: '36px', height: '36px', display: 'flex', alignItems: 'center', 
+                justifyContent: 'center', cursor: 'pointer', zIndex: 10, color: '#fff',
+                fontSize: '1rem', fontWeight: 'bold', backdropFilter: 'blur(4px)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.3)'}
+            >
+              ✕
+            </button>
+
+            {/* Profile Header Background */}
+            <div style={{ height: '140px', background: `linear-gradient(135deg, ${primaryColor}22 0%, rgba(0,0,0,0) 100%)`, position: 'absolute', top: 0, left: 0, right: 0 }} />
+
+            <div style={{ padding: '3rem 2rem 2rem', position: 'relative', zIndex: 1, textAlign: 'center' }}>
+              <div style={{ width: 140, height: 140, borderRadius: '50%', background: 'var(--color-bg-base)', margin: '0 auto 1.5rem', padding: '6px', border: `3px solid ${primaryColor}`, boxShadow: '0 12px 24px rgba(0,0,0,0.2)' }}>
+                {selectedStaffForProfile.avatar_url ? (
+                  <img src={selectedStaffForProfile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} alt="Profile" />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 700 }}>
+                    {selectedStaffForProfile.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                  </div>
+                )}
+              </div>
+
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.25rem' }}>{selectedStaffForProfile.name}</h2>
+              <div style={{ color: primaryColor, fontWeight: 700, letterSpacing: '0.1em', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
+                {selectedStaffForProfile.specialty || 'Profesional'}
+              </div>
+
+              {selectedStaffForProfile.bio ? (
+                <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.6, fontSize: '0.95rem', marginBottom: '2rem' }}>
+                  {selectedStaffForProfile.bio}
+                </p>
+              ) : (
+                <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '2rem' }}>
+                  Este profesional aún no ha añadido una biografía.
+                </p>
+              )}
+
+              {selectedStaffForProfile.instagram && (
+                <a 
+                  href={`https://instagram.com/${selectedStaffForProfile.instagram.replace('@','')}`} 
+                  target="_blank" rel="noreferrer"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--color-text-primary)', textDecoration: 'none', marginBottom: '2.5rem', opacity: 0.8, transition: 'opacity 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+                  onMouseLeave={e => e.currentTarget.style.opacity = '0.8'}
+                >
+                  <BrandIcon name="instagram" size={24} />
+                  <span style={{ fontWeight: 600 }}>@{selectedStaffForProfile.instagram.replace('@','')}</span>
+                </a>
+              )}
+
+              <button 
+                onClick={() => openBooking(undefined, selectedStaffForProfile.id)}
+                style={{ 
+                  width: '100%', padding: '1.25rem', borderRadius: '16px', 
+                  background: primaryColor, color: '#fff', border: 'none', 
+                  fontWeight: 800, fontSize: '1.1rem', cursor: 'pointer',
+                  boxShadow: `0 10px 30px ${primaryColor}44`,
+                  transition: 'transform 0.2s'
+                }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+              >
+                Reservar Cita con {selectedStaffForProfile.name.split(' ')[0]}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 

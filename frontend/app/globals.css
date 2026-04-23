@@ -428,6 +428,50 @@ a {
   box-shadow: 0 0 20px rgba(201,168,76,0.2);
 }
 
+/* Fix for Select dropdowns in dark mode */
+.dark select.form-input option {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+/* Phone Input Custom Styling */
+.phone-input-dashboard.phone-input-container {
+  width: 100%;
+}
+
+.phone-input-dashboard .phone-input-field {
+  width: 100% !important;
+  height: auto !important;
+  padding: 0.75rem 1rem !important;
+  padding-left: 48px !important;
+  font-size: 0.95rem !important;
+  background: var(--color-bg-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--color-text-primary) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.dark .phone-input-dashboard .phone-input-field {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.phone-input-dashboard .phone-input-button {
+  background: transparent !important;
+  border: none !important;
+  border-right: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) 0 0 var(--radius-md) !important;
+  left: 1px !important;
+  top: 1px !important;
+  bottom: 1px !important;
+  height: auto !important;
+}
+
+.phone-input-dashboard .phone-input-button .selected-flag {
+  background: transparent !important;
+  width: 40px !important;
+}
+
 /* OTP Input */
 .otp-inputs {
   display: flex;

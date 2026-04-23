@@ -20,15 +20,17 @@ export default function DashboardShell({ children, profile, tenant }: DashboardS
     <div className="dashboard-root">
       {/* Mobile Header Bar */}
       <div className="mobile-header">
+        <button onClick={toggleSidebar} className="mobile-menu-toggle" aria-label="Abrir menú">
+          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
         <div className="dashboard-sidebar-logo" style={{ padding: 0, border: 'none' }}>
           <div className="dashboard-sidebar-logo-icon">
             <Scissors strokeWidth={2.5} size={18} />
           </div>
           <span className="dashboard-sidebar-logo-name">Bookeiro</span>
         </div>
-        <button onClick={toggleSidebar} className="mobile-menu-toggle" aria-label="Abrir menú">
-          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Empty div to balance the space if needed, or just let them spread */}
+        <div style={{ width: 40 }} /> 
       </div>
 
       {/* Overlay for mobile — outside wrapper so it covers full screen */}

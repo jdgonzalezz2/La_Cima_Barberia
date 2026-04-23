@@ -1,9 +1,10 @@
-import Link from 'next/link'
 import { getCurrentProfile } from '@/lib/auth'
 import { createInsForgeServerClient } from '@/lib/insforge-server'
 import { getAccessToken } from '@/lib/cookies'
 import { redirect } from 'next/navigation'
-import CreateServiceClient from './CreateServiceClient'
+import ServiceDialog from './ServiceDialog'
+import ServicesGridClient from './ServicesGridClient'
+import { Scissors, Sparkles } from 'lucide-react'
 
 export const metadata = { title: 'Catálogo de Servicios | Bookeiro' }
 
@@ -21,52 +22,34 @@ export default async function ServicesPage() {
     .order('created_at', { ascending: true })
 
   return (
-    <div style={{ maxWidth: 800 }}>
-      {/* Encabezado */}
-      <div style={{ marginBottom: '2rem' }}>
-        <Link href="/dashboard" style={{ color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.9rem' }}>
-          ← Volver al Dashboard
-        </Link>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', marginTop: '0.5rem' }}>Servicios y Precios</h1>
-        <p style={{ color: 'var(--color-text-secondary)' }}>Configura los servicios que tus clientes pueden agendar.</p>
-      </div>
+    <div className="dashboard-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      
+      <header className="dashboard-page-header" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem' }}>
+        <div>
+          <h1 className="dashboard-page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '2.5rem', fontFamily: 'var(--font-display)', marginBottom: '0.75rem' }}>
+            <Scissors size={40} className="text-gold" /> Servicios y Precios
+          </h1>
+          <p className="dashboard-page-desc" style={{ fontSize: '1.1rem', maxWidth: '600px' }}>
+            Administra el alma de tu negocio. Define tiempos, costos y experiencias para tus clientes.
+          </p>
+        </div>
+        
+        <ServiceDialog />
+      </header>
 
-      <CreateServiceClient />
-
-      <div style={{ marginTop: '2.5rem', display: 'grid', gap: '1rem' }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', marginBottom: '0.5rem' }}>Servicios Activos</h2>
+      <div style={{ marginTop: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+          <Sparkles size={20} style={{ color: 'var(--color-primary)' }} />
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', margin: 0 }}>Catálogo Activo</h2>
+        </div>
         
         {services?.length === 0 ? (
-          <div className="alert border" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-             No tienes servicios aún. Crea al menos uno para que tus clientes puedan reservar.
+          <div className="alert border" style={{ textAlign: 'center', padding: '6rem 2rem', borderRadius: '32px', background: 'var(--color-bg-surface)' }}>
+             <Scissors size={48} style={{ margin: '0 auto 1.5rem', opacity: 0.2 }} />
+             <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)' }}>No tienes servicios aún. Crea el primero para abrir tu agenda.</p>
           </div>
         ) : (
-          services?.map((s: any) => (
-            <div key={s.id} style={{ 
-              background: 'var(--color-glass)', border: '1px solid var(--color-glass-border)', 
-              padding: '1.5rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
-            }}>
-              <div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>{s.name}</div>
-                {s.description && <div style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>{s.description}</div>}
-                
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.8rem', fontSize: '0.85rem' }}>
-                  <span style={{ background: 'rgba(255,255,255,0.05)', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>
-                    ⏱️ {s.duration_mins} min
-                  </span>
-                  <span style={{ background: 'rgba(212, 175, 55, 0.1)', color: 'var(--color-primary)', padding: '0.3rem 0.6rem', borderRadius: '4px', fontWeight: 600 }}>
-                    💰 ${s.base_price}
-                  </span>
-                </div>
-              </div>
-              
-              <div>
-                <button className="btn btn-ghost" style={{ color: '#e74c3c' }}>
-                  Hacer Inactivo
-                </button>
-              </div>
-            </div>
-          ))
+          <ServicesGridClient services={services || []} />
         )}
       </div>
     </div>

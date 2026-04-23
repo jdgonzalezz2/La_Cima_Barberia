@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { saveSettingsAction, uploadImageAction, generateImageFromAIAction } from './actions'
@@ -18,7 +18,7 @@ const COLOR_PRESETS = [
 
 export default function ClientPage({ tenant }: { tenant: any }) {
   const router = useRouter()
-  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [isComplete, setIsComplete] = useState(false)
   const [step, setStep] = useState(1)
   const [isUploadingLogo, setIsUploadingLogo] = useState(false)
   const [isUploadingCover, setIsUploadingCover] = useState(false)
@@ -38,8 +38,11 @@ export default function ClientPage({ tenant }: { tenant: any }) {
     tags: (tenant?.tags || []).join(', '),
     map_url: tenant?.map_url || '',
     instagram: tenant?.instagram || '',
+    facebook: tenant?.facebook || '',
+    tiktok: tenant?.tiktok || '',
     whatsapp: tenant?.whatsapp || '',
     address: tenant?.address || '',
+    phone: tenant?.phone || '',
   })
 
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
@@ -119,7 +122,7 @@ export default function ClientPage({ tenant }: { tenant: any }) {
     if (result.error) {
       setMessage({ text: 'Error al guardar configuración: ' + result.error, type: 'error' })
     } else {
-      setShowSuccessModal(true)
+      setIsComplete(true)
     }
     setIsSaving(false)
   }
@@ -134,16 +137,32 @@ export default function ClientPage({ tenant }: { tenant: any }) {
     { title: "Contacto", desc: "Redes y vitrina" }
   ]
 
+  if (isComplete) {
+    return (
+      <PublicationSuccessView 
+        tenant={tenant} 
+        formData={formData} 
+        logoUrl={logoUrl} 
+        coverUrl={coverUrl} 
+        onEditMore={() => setIsComplete(false)}
+        onBack={() => router.push('/dashboard')}
+      />
+    )
+  }
+
   return (
-    <div style={{ 
-      width: '100%', 
-      maxWidth: step === 1 ? '800px' : '1100px', 
-      margin: '0 auto', 
-      display: 'flex', 
-      flexWrap: 'wrap', 
-      gap: '2.5rem', 
-      transition: 'max-width 0.3s ease' 
-    }}>
+    <div className="dashboard-container">
+      
+      <header className="dashboard-page-header" style={{ marginBottom: '1.25rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem', color: 'var(--color-text-primary)' }}>Diseño del Portal</h2>
+        <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Personaliza la experiencia visual de tus clientes y la identidad de tu marca.</p>
+      </header>
+
+      <div style={{ 
+        display: 'flex', 
+        flexWrap: 'wrap', 
+        gap: '2.5rem'
+      }}>
       <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
       {message && (
         <div className={`alert alert-${message.type}`} style={{ marginBottom: '2rem' }}>
@@ -397,7 +416,7 @@ export default function ClientPage({ tenant }: { tenant: any }) {
               <small style={{ color: 'var(--color-text-muted)', display: 'block', marginTop: '6px' }}>Múltiples etiquetas separadas por comas.</small>
             </div>
 
-            <hr style={{ border: 'none', borderTop: '1px solid var(--color-glass-border)', margin: '1rem 0' }} />
+            <hr style={{ border: 'none', borderTop: '1px solid var(--color-glass-border)', margin: '0.5rem 0' }} />
 
             <div className="settings-grid">
               <div className="form-group">
@@ -414,6 +433,14 @@ export default function ClientPage({ tenant }: { tenant: any }) {
                   <span style={{ padding: '0.75rem 1rem', color: 'var(--color-text-muted)', borderRight: '1px solid var(--color-border)' }}>@</span>
                   <input type="text" name="instagram" value={formData.instagram} onChange={handleTextChange} placeholder="tubarberia" style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', padding: '0.75rem', color: 'var(--color-text-primary)' }} />
                 </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Facebook (URL)</label>
+                <input type="url" name="facebook" value={formData.facebook} onChange={handleTextChange} className="form-input" placeholder="https://facebook.com/..." />
+              </div>
+              <div className="form-group">
+                <label className="form-label">TikTok (URL)</label>
+                <input type="url" name="tiktok" value={formData.tiktok} onChange={handleTextChange} className="form-input" placeholder="https://tiktok.com/@..." />
               </div>
               <div className="form-group">
                 <label className="form-label">Línea WhatsApp</label>
@@ -473,31 +500,101 @@ export default function ClientPage({ tenant }: { tenant: any }) {
         </div>
       )}
 
-      {/* -- Modal de Éxito -- */}
-      {showSuccessModal && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fade-in 0.2s ease' }}>
-          <div style={{ background: 'var(--color-bg-base)', borderRadius: 'var(--radius-lg)', padding: '2.5rem', width: '90%', maxWidth: 450, textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ width: 64, height: 64, background: '#10B981', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-              <Check size={32} />
-            </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>¡Portal Publicado!</h2>
-            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>
-              Tu configuración ha sido guardada con éxito. Ya puedes ver cómo luce en vivo o volver a tu panel principal.
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <Link href={`/${tenant.slug}`} target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'var(--color-primary)', color: '#fff', padding: '0.875rem', borderRadius: 'var(--radius-md)', fontWeight: 600, textDecoration: 'none' }}>
-                <ExternalLink size={18} /> Ver mi página pública
-              </Link>
-              <button type="button" onClick={() => router.push('/dashboard')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)', padding: '0.875rem', borderRadius: 'var(--radius-md)', fontWeight: 600, cursor: 'pointer' }}>
-                <LayoutDashboard size={18} /> Volver al Dashboard
-              </button>
-              <button type="button" onClick={() => setShowSuccessModal(false)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', padding: '0.5rem', marginTop: '0.5rem', fontWeight: 500, cursor: 'pointer', textDecoration: 'underline' }}>
-                Cerrar y seguir editando
-              </button>
-            </div>
-          </div>
+    </div>
+    </div>
+  )
+}
+
+function PublicationSuccessView({ tenant, formData, logoUrl, coverUrl, onEditMore, onBack }: any) {
+  return (
+    <div className="dashboard-container" style={{ animation: 'fade-in 0.5s ease-out' }}>
+      <div style={{ 
+        background: 'var(--color-bg-card)', 
+        borderRadius: 'var(--radius-xl)', 
+        padding: '3rem',
+        border: '1px solid var(--color-border)',
+        boxShadow: 'var(--shadow-lg)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+        gap: '2rem'
+      }}>
+        {/* Success Icon */}
+        <div style={{ 
+          width: 80, height: 80, background: '#10B981', color: 'white', borderRadius: '50%', 
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 0 30px rgba(16, 185, 129, 0.3)',
+          animation: 'scale-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+        }}>
+          <Check size={40} strokeWidth={3} />
         </div>
-      )}
+
+        {/* Header */}
+        <div>
+          <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: '0.75rem', letterSpacing: '-0.03em' }}>
+            ¡Tu Portal está en el Aire!
+          </h2>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '1.1rem', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
+            Todo ha quedado guardado perfectamente. Tu vitrina digital ya está lista para recibir clientes y mostrar lo mejor de <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>{tenant.name}</span>.
+          </p>
+        </div>
+
+        {/* Preview Container */}
+        <div style={{ 
+          width: '100%', 
+          maxWidth: 400, 
+          transform: 'scale(0.95)',
+          opacity: 0.9,
+          filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.2))'
+        }}>
+          <LivePreview formData={formData} logoUrl={logoUrl} coverUrl={coverUrl} tenantName={tenant.name} tenantSlug={tenant.slug} />
+        </div>
+
+        {/* Actions */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', width: '100%', maxWidth: 600 }}>
+          <Link 
+            href={`/${tenant.slug}`} 
+            target="_blank" 
+            style={{ 
+              flex: '1 1 250px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', 
+              background: 'var(--color-primary)', color: '#fff', padding: '1.25rem', 
+              borderRadius: 'var(--radius-md)', fontWeight: 700, textDecoration: 'none',
+              transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(201, 168, 76, 0.3)'
+            }}
+          >
+            <ExternalLink size={20} /> Ver mi vitrina pública
+          </Link>
+
+          <button 
+            type="button" 
+            onClick={onBack}
+            style={{ 
+              flex: '1 1 250px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', 
+              background: 'var(--color-bg-base)', border: '1px solid var(--color-border)', 
+              color: 'var(--color-text-primary)', padding: '1.25rem', 
+              borderRadius: 'var(--radius-md)', fontWeight: 700, cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            <LayoutDashboard size={20} /> Ir al Panel Principal
+          </button>
+        </div>
+
+        <button 
+          type="button" 
+          onClick={onEditMore} 
+          style={{ 
+            background: 'transparent', border: 'none', 
+            color: 'var(--color-text-secondary)', fontWeight: 600, cursor: 'pointer',
+            padding: '0.5rem 1rem', textDecoration: 'underline', opacity: 0.8
+          }}
+        >
+          ¿Quieres ajustar algo más? Seguir editando
+        </button>
+      </div>
     </div>
   )
 }
@@ -526,7 +623,7 @@ function LivePreview({ formData, logoUrl, coverUrl, tenantName, tenantSlug }: { 
   }
 
   const LogoEl = ({ size = 64 }: { size?: number}) => (
-    <div style={{ width: size, height: size, borderRadius: '50%', background: logoUrl ? '#fff' : formData.primary_color, border: `2px solid ${bgColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+    <div style={{ width: size, height: size, borderRadius: '50%', background: logoUrl ? '#fff' : formData.primary_color, border: `3px solid ${bgColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, boxShadow: '0 8px 16px -4px rgba(0,0,0,0.3)', zIndex: 10 }}>
       {logoUrl ? <img src={logoUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: size/2 }}>✂️</span>}
     </div>
   )

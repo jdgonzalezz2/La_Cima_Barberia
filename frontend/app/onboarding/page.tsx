@@ -5,6 +5,7 @@ import { createTenantAction } from './actions'
 import { Scissors } from 'lucide-react'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export default function OnboardingPage() {
   const [state, formAction, isPending] = useActionState(createTenantAction, null)
@@ -48,6 +49,9 @@ export default function OnboardingPage() {
 
       {/* ── Right: Form ── */}
       <div className="auth-form-panel">
+        <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem' }}>
+          <ThemeToggle />
+        </div>
         <div className="auth-card" style={{ maxWidth: '500px' }}>
           <div className="auth-card-header">
             <h1 className="auth-card-title">Crea tu Barbería</h1>
@@ -61,6 +65,27 @@ export default function OnboardingPage() {
           )}
 
           <form action={formAction}>
+            {/* Help for invited staff */}
+            <div style={{ 
+              background: 'rgba(201,168,76,0.05)', 
+              border: '1px border-dashed var(--color-primary)', 
+              borderRadius: 'var(--radius-lg)', 
+              padding: '1.25rem', 
+              marginBottom: '2rem',
+              display: 'flex',
+              gap: '1rem',
+              alignItems: 'center'
+            }}>
+              <div style={{ fontSize: '1.5rem' }}>👋</div>
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--color-primary)', fontSize: '0.9rem', marginBottom: '0.2rem' }}>¿Vienes invitado por alguien más?</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', lineHeight: 1.4 }}>
+                  Si tu jefe ya te registró con este correo, no es necesario que crees una barbería. 
+                  <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}> Refresca esta página</span> o espera unos segundos.
+                </div>
+              </div>
+            </div>
+
             <div className="form-group">
               <label className="form-label" htmlFor="tenant-name">Nombre de la Barbería</label>
               <input

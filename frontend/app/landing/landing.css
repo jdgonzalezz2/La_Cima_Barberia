@@ -19,6 +19,9 @@
   --line:          #ececec;
   --line-soft:     #f3f2ed;
 
+  --bg-card:       #ffffff;
+  --line-card:     rgba(0,0,0,0.06);
+
   --font-display: var(--font-fraunces), 'Fraunces', Georgia, serif;
   --font-body:    var(--font-dm), 'DM Sans', system-ui, sans-serif;
 
@@ -31,9 +34,26 @@
   line-height: 1.55;
   overflow-x: hidden;
   isolation: isolate;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* soft atmospheric glow — very restrained */
+.dark .landing-shell {
+  --bg:            #0a0a0f;
+  --bg-soft:       #111118;
+  --bg-deep:       #16161f;
+  --ink:           #f0f0f5;
+  --ink-soft:      #a0a0b0;
+  --ink-whisper:   #707085;
+  --line:          rgba(255, 255, 255, 0.08);
+  --line-soft:     rgba(255, 255, 255, 0.05);
+  --gold-whisper:  rgba(201, 168, 76, 0.1);
+  --sage:          #8aa082;
+  
+  --bg-card:       #16161f;
+  --line-card:     rgba(255,255,255,0.08);
+}
+
+/* soft atmospheric glow */
 .landing-shell::before {
   content: '';
   position: fixed;
@@ -43,6 +63,14 @@
     radial-gradient(circle at 0% 60%, rgba(106, 122, 98, 0.05), transparent 50%);
   pointer-events: none;
   z-index: 0;
+  transition: opacity 0.5s ease;
+}
+
+.dark .landing-shell::before {
+  background-image:
+    radial-gradient(circle at 80% 0%, rgba(201, 168, 76, 0.12), transparent 45%),
+    radial-gradient(circle at 0% 60%, rgba(106, 122, 98, 0.08), transparent 50%);
+  opacity: 0.6;
 }
 
 .landing-shell > * { position: relative; z-index: 1; }
@@ -59,7 +87,8 @@
   z-index: 50;
   backdrop-filter: saturate(160%) blur(16px);
   -webkit-backdrop-filter: saturate(160%) blur(16px);
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--bg-soft);
+  opacity: 0.96;
   border-bottom: 1px solid var(--line);
 }
 .ln-nav-inner {
@@ -141,7 +170,7 @@
 }
 .ln-btn-ink {
   background: var(--ink);
-  color: #fff !important;
+  color: var(--bg) !important;
   box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 6px 22px -10px rgba(20, 20, 24, 0.45);
 }
 .ln-btn-ink:hover {
@@ -274,14 +303,14 @@
 }
 .ln-booking-card {
   position: absolute;
-  background: var(--bg);
-  border: 1px solid var(--line);
+  background: var(--bg-card);
+  border: 1px solid var(--line-card);
   border-radius: 18px;
   padding: 1.25rem 1.35rem;
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.8) inset,
-    0 16px 40px -18px rgba(20, 20, 24, 0.18),
-    0 2px 8px -2px rgba(20, 20, 24, 0.06);
+    0 1px 0 rgba(255,255,255,0.05) inset,
+    0 16px 40px -18px rgba(0, 0, 0, 0.35),
+    0 2px 8px -2px rgba(0, 0, 0, 0.15);
   transition: transform 400ms cubic-bezier(.2,.8,.2,1);
 }
 .ln-booking-card:hover { transform: translateY(-4px) rotate(0deg) !important; }
@@ -297,12 +326,12 @@
   width: 300px;
   transform: rotate(3deg);
   animation: ln-float-in 900ms 120ms cubic-bezier(.2,.8,.2,1) both;
-  background: var(--ink);
-  color: var(--bg);
-  border-color: transparent;
+  background: var(--bg-card);
+  color: var(--ink);
+  border: 1px solid var(--line-card);
   box-shadow:
     0 1px 0 rgba(255,255,255,0.04) inset,
-    0 22px 48px -20px rgba(20, 20, 24, 0.5);
+    0 22px 48px -20px rgba(0, 0, 0, 0.4);
 }
 .ln-card-3 {
   top: 320px; right: 1rem;
@@ -343,7 +372,7 @@
   color: var(--ink-whisper);
   margin-bottom: 0.85rem;
 }
-.ln-card-2 .ln-bc-head { color: rgba(255,255,255,0.5); }
+.ln-card-2 .ln-bc-head { color: var(--ink-whisper); opacity: 0.8; }
 .ln-bc-service {
   font-family: var(--font-display);
   font-size: 1.25rem;
@@ -353,7 +382,7 @@
   margin-bottom: 0.3rem;
 }
 .ln-bc-client { font-size: 0.88rem; color: var(--ink-soft); }
-.ln-card-2 .ln-bc-client { color: rgba(255,255,255,0.65); }
+.ln-card-2 .ln-bc-client { color: var(--ink-soft); }
 
 .ln-bc-foot {
   display: flex;
@@ -364,14 +393,14 @@
   border-top: 1px dashed var(--line);
   font-size: 0.85rem;
 }
-.ln-card-2 .ln-bc-foot { border-top-color: rgba(255,255,255,0.12); }
+.ln-card-2 .ln-bc-foot { border-top-color: var(--line); }
 .ln-bc-barber {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   color: var(--ink-soft);
 }
-.ln-card-2 .ln-bc-barber { color: rgba(255,255,255,0.7); }
+.ln-card-2 .ln-bc-barber { color: var(--ink-soft); }
 .ln-bc-avatar {
   width: 22px; height: 22px;
   border-radius: 50%;
@@ -379,14 +408,14 @@
   border: 2px solid var(--bg);
   flex-shrink: 0;
 }
-.ln-card-2 .ln-bc-avatar { border-color: var(--ink); }
+.ln-card-2 .ln-bc-avatar { border-color: var(--line); }
 .ln-bc-price {
   font-family: var(--font-display);
   font-weight: 500;
   font-size: 1rem;
   color: var(--gold-deep);
 }
-.ln-card-2 .ln-bc-price { color: var(--gold-light); }
+.ln-card-2 .ln-bc-price { color: var(--gold-deep); }
 
 @keyframes ln-float-in {
   from { opacity: 0; transform: translateY(24px) rotate(0deg); }
@@ -500,10 +529,11 @@
 }
 .ln-feature-large { grid-column: span 4; }
 .ln-feature-small { grid-column: span 2; }
+.ln-feature-small { grid-column: span 2; }
 .ln-feature-dark {
-  background: var(--ink);
-  color: var(--bg);
-  border-color: transparent;
+  background: #111118;
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .ln-feature-dark:hover {
   border-color: var(--gold);
@@ -536,12 +566,13 @@
   align-items: center;
   padding: 0.28rem 0.7rem;
   border-radius: 999px;
-  background: var(--bg);
-  border: 1px solid var(--line);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.2);
   font-size: 0.72rem;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  color: var(--gold);
   margin-bottom: 1rem;
   width: fit-content;
 }
@@ -565,6 +596,8 @@
   color: var(--ink-soft);
   line-height: 1.55;
   margin-top: auto;
+  padding-right: 95px;
+  max-width: 90%;
 }
 
 /* Decorative mini chart */
@@ -714,10 +747,11 @@
 }
 .ln-phone-hero-label {
   font-size: 0.7rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  opacity: 0.75;
+  color: rgba(0,0,0,0.5);
   margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 .ln-phone-hero h4 {
   font-family: var(--font-display);
@@ -725,6 +759,7 @@
   font-size: 1.6rem;
   line-height: 1.08;
   letter-spacing: -0.02em;
+  color: #141418;
 }
 .ln-phone-hero h4 em { font-style: italic; }
 .ln-phone-body {
@@ -761,7 +796,7 @@
   color: var(--ink-whisper);
   margin-top: 2px;
 }
-.ln-svc-row-selected .ln-svc-meta { color: rgba(255,255,255,0.55); }
+.ln-svc-row-selected .ln-svc-meta { color: rgba(0,0,0,0.45); }
 .ln-svc-price {
   font-family: var(--font-display);
   font-weight: 500;
@@ -784,8 +819,8 @@
    HOW IT WORKS (ink section — high contrast)
    ============================================================ */
 .ln-how {
-  background: var(--ink);
-  color: var(--bg);
+  background: #141418;
+  color: #ffffff;
   padding: 7rem 1.75rem;
   margin: 0;
   position: relative;
@@ -814,7 +849,7 @@
   font-size: clamp(2rem, 4.2vw, 3.4rem);
   line-height: 1.02;
   letter-spacing: -0.022em;
-  color: var(--bg);
+  color: #ffffff;
 }
 .ln-how-head h2 em {
   font-style: italic;
@@ -856,7 +891,7 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: var(--ink);
+  background: #141418;
   border: 1px solid rgba(201, 168, 76, 0.4);
   display: grid;
   place-items: center;
@@ -870,10 +905,10 @@
   font-size: 1.45rem;
   letter-spacing: -0.015em;
   margin-bottom: 0.7rem;
-  color: var(--bg);
+  color: #ffffff;
 }
 .ln-step p {
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 0.95rem;
   max-width: 34ch;
 }
@@ -975,8 +1010,8 @@
 }
 .ln-final-inner {
   position: relative;
-  background: var(--ink);
-  color: var(--bg);
+  background: #141418;
+  color: #ffffff;
   border-radius: 28px;
   padding: 5rem 3rem;
   overflow: hidden;
@@ -1008,7 +1043,7 @@
   font-size: clamp(2.2rem, 5vw, 4rem);
   line-height: 1;
   letter-spacing: -0.025em;
-  color: var(--bg);
+  color: #ffffff;
   margin-bottom: 1rem;
   max-width: 18ch;
   margin-left: auto;
@@ -1023,13 +1058,13 @@
   color: transparent;
 }
 .ln-final p {
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1.05rem;
   max-width: 50ch;
   margin: 0 auto 2.25rem;
 }
 .ln-final .ln-btn-ghost {
-  color: var(--bg);
+  color: #ffffff;
   border-color: rgba(255,255,255,0.25);
 }
 .ln-final .ln-btn-ghost:hover {

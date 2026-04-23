@@ -17,20 +17,103 @@ async function getClientAndTenant() {
   return { insforge, tenantId: profile.tenant_id }
 }
 
-export async function createStaffAction(name: string, invite_email: string) {
+export async function createStaffAction(params: {
+  name: string, 
+  invite_email: string,
+  avatar_url?: string,
+  instagram?: string,
+  specialty?: string,
+  bio?: string
+}) {
+  const { name, invite_email, avatar_url, instagram, specialty, bio } = params
   try {
     const { insforge, tenantId } = await getClientAndTenant()
     
-    const payload: any = { tenant_id: tenantId, name }
+    // Fetch tenant name for the invitation
+    const { data: tenant } = await insforge.database.from('tenants').select('name').eq('id', tenantId).single()
+    const tenantName = tenant?.name || 'Bookeiro'
+
+    const payload: any = { 
+      tenant_id: tenantId, 
+      name,
+      avatar_url: avatar_url || null,
+      instagram: instagram?.trim() || null,
+      specialty: specialty?.trim() || null,
+      bio: bio?.trim() || null
+    }
+    
     if (invite_email.trim()) payload.invite_email = invite_email.trim()
 
-    const { error } = await insforge.database
+    const { error: dbError } = await insforge.database
       .from('staff')
       .insert(payload)
       
-    if (error) return { error: error.message }
+    if (dbError) return { error: dbError.message }
+
+    // 🔥 Native Invitation via InsMessage
+    if (invite_email.trim()) {
+      try {
+        await insforge.functions.invoke('insmessage', {
+          body: {
+            type: 'staff_invite',
+            payload: {
+              email: invite_email.trim(),
+              staffName: name,
+              tenantName: tenantName
+            }
+          }
+        })
+      } catch (msgErr) {
+        console.error('Failed to trigger insmessage:', msgErr)
+      }
+    }
     
     revalidatePath('/dashboard/staff')
+    return { success: true }
+  } catch (err: any) {
+    return { error: err.message }
+  }
+}
+
+export async function updateStaffAction(staffId: string, params: {
+  name?: string,
+  avatar_url?: string,
+  instagram?: string,
+  specialty?: string,
+  bio?: string,
+  is_active?: boolean
+}) {
+  try {
+    const { insforge, tenantId } = await getClientAndTenant()
+    
+    // Validate authorization: Either owner of tenant OR the staff member themselves
+    const profile = await getCurrentProfile()
+    if (!profile) throw new Error('Not authenticated')
+
+    const { data: tenantRow } = await insforge.database.from('tenants').select('owner_id').eq('id', tenantId).single()
+    const isOwner = tenantRow?.owner_id === profile.id
+
+    const { data: staff } = await insforge.database
+      .from('staff')
+      .select('id, user_id')
+      .eq('id', staffId)
+      .eq('tenant_id', tenantId)
+      .single()
+      
+    if (!staff) return { error: 'No encontrado' }
+
+    const isSelf = staff.user_id === profile.id
+    if (!isOwner && !isSelf) return { error: 'No autorizado para editar este perfil' }
+
+    const { error: dbError } = await insforge.database
+      .from('staff')
+      .update(params)
+      .eq('id', staffId)
+      
+    if (dbError) return { error: dbError.message }
+
+    revalidatePath('/dashboard/staff')
+    revalidatePath(`/dashboard/staff/${staffId}`)
     return { success: true }
   } catch (err: any) {
     return { error: err.message }
@@ -64,6 +147,36 @@ export async function saveWorkingHoursAction(staffId: string, hours: any[]) {
     }
     
     revalidatePath(`/dashboard/staff/${staffId}`)
+    return { success: true }
+  } catch (err: any) {
+    return { error: err.message }
+  }
+}
+
+export async function deleteStaffAction(staffId: string) {
+  try {
+    const { insforge, tenantId } = await getClientAndTenant()
+    
+    // Authorization: ONLY owner can delete staff
+    const profile = await getCurrentProfile()
+    if (!profile) throw new Error('Not authenticated')
+
+    const { data: tenant } = await insforge.database.from('tenants').select('owner_id').eq('id', tenantId).single()
+    if (tenant?.owner_id !== profile.id) {
+      return { error: 'No autorizado para borrar personal. Solo el administrador puede hacerlo.' }
+    }
+
+    // Since database has CASCADE enabled for appointments, working_hours, and staff_services,
+    // we don't need to manually delete them. A single delete on 'staff' will suffice.
+    const { error } = await insforge.database
+      .from('staff')
+      .delete()
+      .eq('id', staffId)
+      .eq('tenant_id', tenantId)
+
+    if (error) return { error: error.message }
+
+    revalidatePath('/dashboard/staff')
     return { success: true }
   } catch (err: any) {
     return { error: err.message }

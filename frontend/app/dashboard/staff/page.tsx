@@ -4,7 +4,8 @@ import { createInsForgeServerClient } from '@/lib/insforge-server'
 import { getAccessToken } from '@/lib/cookies'
 import { redirect } from 'next/navigation'
 import CreateStaffClient from './CreateStaffClient'
-import { Plus, Settings, Users, Hourglass, CheckCircle2, UserCircle } from 'lucide-react'
+import { Plus, Settings, Users, Hourglass, CheckCircle2, UserCircle, Trash2 } from 'lucide-react'
+import DeleteStaffButton from './DeleteStaffButton'
 
 export const metadata = { title: 'Gestión de Personal | Bookeiro' }
 
@@ -22,17 +23,14 @@ export default async function StaffPage() {
     .order('created_at', { ascending: true })
 
   return (
-    <div style={{ maxWidth: 800 }}>
-      {/* Encabezado con Pan de Migas / Nav Volver */}
-      <div style={{ marginBottom: '2rem' }}>
-        <Link href="/dashboard" style={{ color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.9rem' }}>
-          ← Volver al Dashboard
-        </Link>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+    <div className="dashboard-container">
+      
+      <header className="dashboard-page-header">
+        <h1 className="dashboard-page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Users size={32} /> Personal y Barberos
         </h1>
-        <p style={{ color: 'var(--color-text-secondary)' }}>Administra tu equipo de trabajo y sus horarios.</p>
-      </div>
+        <p className="dashboard-page-desc">Administra tu equipo de trabajo, sus horarios y vinculaciones.</p>
+      </header>
 
       {/* Acción Nuevo Personal */}
       <CreateStaffClient />
@@ -70,9 +68,12 @@ export default async function StaffPage() {
                   </div>
                 </div>
               </div>
-              <Link href={`/dashboard/staff/${s.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Settings size={16} /> Configurar Horarios
-              </Link>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                <DeleteStaffButton staffId={s.id} staffName={s.name} />
+                <Link href={`/dashboard/staff/${s.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: '12px' }}>
+                  <Settings size={16} /> Gestionar
+                </Link>
+              </div>
             </div>
           ))
         )}

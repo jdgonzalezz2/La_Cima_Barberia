@@ -149,10 +149,11 @@ export default function BookingModal({
                     <div key={st.id} onClick={() => { setSelectedStaff(st); setStep(3) }}
                       style={{ padding: '1rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', textAlign: 'center', cursor: 'pointer', background: 'var(--color-glass)' }}
                     >
-                      <div style={{ width: 50, height: 50, borderRadius: '50%', background: 'var(--color-border)', margin: '0 auto 0.8rem', overflow: 'hidden' }}>
-                        {st.avatar_url ? <img src={st.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="pic"/> : <div style={{ fontSize: '1.5rem', marginTop: '0.3rem' }}>✂️</div>}
+                      <div style={{ width: 50, height: 50, borderRadius: '50%', background: 'var(--color-bg-base)', margin: '0 auto 0.8rem', overflow: 'hidden', border: `1px solid var(--color-primary)` }}>
+                        {st.avatar_url ? <img src={st.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="pic"/> : <div style={{ fontSize: '1.5rem', marginTop: '0.3rem' }}>🧑</div>}
                       </div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{st.name}</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{st.name}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--color-primary)', marginTop: '0.2rem', fontWeight: 600 }}>{st.specialty || 'Profesional'}</div>
                     </div>
                   ))}
                 </div>

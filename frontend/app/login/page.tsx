@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { signInAction, initiateOAuthAction } from './actions'
 import { Scissors } from 'lucide-react'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 function LoginForm() {
   const searchParams = useSearchParams()
@@ -55,6 +56,9 @@ function LoginForm() {
 
       {/* ── Right: Form ── */}
       <div className="auth-form-panel">
+        <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem' }}>
+          <ThemeToggle />
+        </div>
         <div className="auth-card">
           <div className="auth-card-header">
             <h1 className="auth-card-title">Bienvenido de vuelta</h1>
@@ -132,7 +136,7 @@ function LoginForm() {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary" disabled={isPending || oauthPending}>
+            <button type="submit" className="btn btn-primary btn-block" disabled={isPending || oauthPending}>
               {isPending ? (
                 <><span className="spinner" /> Iniciando sesión...</>
               ) : (

@@ -20,9 +20,43 @@ export async function createServiceAction(name: string, description: string, dur
   try {
     const { insforge, tenantId } = await getClientAndTenant()
     
+    // Authorization: Only owner can create services
+    const profile = await getCurrentProfile()
+    const { data: tenant } = await insforge.database.from('tenants').select('owner_id').eq('id', tenantId).single()
+    if (tenant?.owner_id !== profile?.id) return { error: 'No autorizado' }
+
     const { error } = await insforge.database
       .from('services')
-      .insert({ tenant_id: tenantId, name, description, duration_mins, base_price })
+      .insert({ tenant_id: tenantId, name, description: description || null, duration_mins, base_price })
+      
+    if (error) return { error: error.message }
+    
+    revalidatePath('/dashboard/services')
+    return { success: true }
+  } catch (err: any) {
+    return { error: err.message }
+  }
+}
+
+export async function updateServiceAction(serviceId: string, params: {
+  name?: string,
+  description?: string,
+  duration_mins?: number,
+  base_price?: number
+}) {
+  try {
+    const { insforge, tenantId } = await getClientAndTenant()
+    
+    // Authorization check
+    const profile = await getCurrentProfile()
+    const { data: tenant } = await insforge.database.from('tenants').select('owner_id').eq('id', tenantId).single()
+    if (tenant?.owner_id !== profile?.id) return { error: 'No autorizado' }
+
+    const { error } = await insforge.database
+      .from('services')
+      .update(params)
+      .eq('id', serviceId)
+      .eq('tenant_id', tenantId)
       
     if (error) return { error: error.message }
     
@@ -37,6 +71,11 @@ export async function deleteServiceAction(serviceId: string) {
   try {
     const { insforge, tenantId } = await getClientAndTenant()
     
+    // Authorization check
+    const profile = await getCurrentProfile()
+    const { data: tenant } = await insforge.database.from('tenants').select('owner_id').eq('id', tenantId).single()
+    if (tenant?.owner_id !== profile?.id) return { error: 'No autorizado' }
+
     const { error } = await insforge.database
       .from('services')
       .delete()

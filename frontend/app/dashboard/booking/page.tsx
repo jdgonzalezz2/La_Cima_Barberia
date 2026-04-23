@@ -28,14 +28,12 @@ export default async function BookingDashboardPage() {
   const pastAppointments = appointments?.filter((a: any) => new Date(a.start_time).getTime() < Date.now()) || []
 
   return (
-    <div style={{ maxWidth: 900 }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <Link href="/dashboard" style={{ color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.9rem' }}>
-          ← Volver al Dashboard
-        </Link>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', marginTop: '0.5rem' }}>Agenda de Reservas</h1>
-        <p style={{ color: 'var(--color-text-secondary)' }}>Controla y visualiza todas las citas agendadas por tus clientes en tiempo real.</p>
-      </div>
+    <div className="dashboard-container">
+      
+      <header className="dashboard-page-header">
+        <h1 className="dashboard-page-title">Agenda de Reservas</h1>
+        <p className="dashboard-page-desc">Controla y visualiza todas las citas agendadas por tus clientes en tiempo real.</p>
+      </header>
 
       <h2 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-display)', margin: '2rem 0 1rem' }}>Citas Próximas</h2>
       <div style={{ display: 'grid', gap: '1rem' }}>
@@ -43,9 +41,9 @@ export default async function BookingDashboardPage() {
           <div className="alert border" style={{ textAlign: 'center', padding: '2rem' }}>No tienes citas próximas agendadas.</div>
         ) : (
           upcomingAppointments.map((a: any) => (
-            <div key={a.id} style={{ 
+            <div key={a.id} className="appointment-row" style={{ 
               background: 'var(--gradient-card)', border: '1px solid var(--color-primary)', 
-              padding: '1.5rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
+              padding: '1.5rem', borderRadius: 'var(--radius-md)' 
             }}>
               <div>
                 <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{new Date(a.start_time).toLocaleString('es-CO', { dateStyle: 'full', timeStyle: 'short' })}</div>
@@ -69,9 +67,9 @@ export default async function BookingDashboardPage() {
           <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--color-text-muted)' }}>El historial está vacío.</div>
         ) : (
           pastAppointments.map((a: any) => (
-            <div key={a.id} style={{ 
+            <div key={a.id} className="appointment-row" style={{ 
               background: 'var(--color-glass)', border: '1px solid var(--color-glass-border)', 
-              padding: '1rem 1.5rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
+              padding: '1rem 1.5rem', borderRadius: 'var(--radius-md)' 
             }}>
                <div>
                 <div style={{ fontSize: '1rem', fontWeight: 600 }}>{new Date(a.start_time).toLocaleString()}</div>

@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react'
 import './landing/landing.css'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export const metadata: Metadata = {
   title: 'Bookeiro — Software de reservas para barberías, salones y spas',
@@ -49,6 +50,7 @@ export default async function LandingPage() {
             </ul>
           </nav>
           <div className="ln-nav-ctas">
+            <ThemeToggle />
             {!user && (
               <Link href="/login" className="ln-btn ln-btn-ghost">
                 Entrar

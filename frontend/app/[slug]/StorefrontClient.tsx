@@ -233,13 +233,13 @@ export default function StorefrontClient({ tenant, primaryColor, fontVar, servic
 
   if (layoutStyle === 'minimal') {
     return (
-      <div style={themeStyles}>
-        <div style={{ padding: '1rem 2rem', borderBottom: `1px solid var(--color-border)`, display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'var(--color-glass)' }}>
+      <div className="storefront-root storefront-minimal" style={themeStyles}>
+        <div className="storefront-header" style={{ padding: '1rem 2rem', borderBottom: `1px solid var(--color-border)`, display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'var(--color-glass)' }}>
           <LogoElement small />
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0 }}>{tenant.name}</h1>
+          <h1 className="storefront-title" style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0 }}>{tenant.name}</h1>
         </div>
-        <div style={{ maxWidth: 1000, margin: '2rem auto', padding: '0 1.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+        <div className="storefront-container" style={{ maxWidth: 1000, margin: '2rem auto', padding: '0 1.5rem' }}>
+          <div className="storefront-info-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
             <MainInfo />
             <QuickInfo />
           </div>
@@ -251,15 +251,15 @@ export default function StorefrontClient({ tenant, primaryColor, fontVar, servic
 
   if (layoutStyle === 'split') {
     return (
-      <div style={{ ...themeStyles, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', paddingBottom: 0 }}>
+      <div className="storefront-root storefront-split" style={{ ...themeStyles, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', paddingBottom: 0 }}>
         {/* Left Side (Cover) */}
-        <div style={{ flex: '1 1 40%', minWidth: '300px', minHeight: '350px', background: coverBg, position: 'relative' }}>
+        <div className="storefront-cover-side" style={{ flex: '1 1 40%', minWidth: '300px', minHeight: '350px', background: coverBg, position: 'relative' }}>
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, transparent, var(--color-bg-base))', opacity: 0.6 }} />
         </div>
         {/* Right Side (Content) */}
-        <div style={{ flex: '1 1 60%', padding: '3rem 2rem', overflowY: 'auto' }}>
+        <div className="storefront-content-side" style={{ flex: '1 1 60%', padding: '3rem 2rem', overflowY: 'auto' }}>
           <div style={{ maxWidth: 800, margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+            <div className="storefront-info-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
               <MainInfo />
               <QuickInfo />
             </div>
@@ -272,16 +272,16 @@ export default function StorefrontClient({ tenant, primaryColor, fontVar, servic
 
   // Classic Layout (Default)
   return (
-    <div style={themeStyles}>
-      <div style={{ 
-        height: '280px', 
+    <div className="storefront-root storefront-classic" style={themeStyles}>
+      <div className="storefront-cover" style={{
+        height: '280px',
         background: coverBg,
         position: 'relative'
       }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, var(--color-bg-base))', opacity: 0.9 }} />
       </div>
-      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 1.5rem', marginTop: '-140px', position: 'relative', zIndex: 10 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+      <div className="storefront-container" style={{ maxWidth: 1000, margin: '0 auto', padding: '0 1.5rem', marginTop: '-140px', position: 'relative', zIndex: 10 }}>
+        <div className="storefront-info-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
           <MainInfo />
           <QuickInfo />
         </div>

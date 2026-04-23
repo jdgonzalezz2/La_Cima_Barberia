@@ -760,35 +760,167 @@ a {
 }
 
 /* ============================================================
-   RESPONSIVE
+   RESPONSIVE — Tablet landscape (≤ 1200px)
+   ============================================================ */
+@media (max-width: 1200px) {
+  .dashboard-content { padding: 2rem 1.5rem; }
+}
+
+/* ============================================================
+   RESPONSIVE — Tablet portrait (≤ 900px)
    ============================================================ */
 @media (max-width: 900px) {
-  .auth-page {
-    grid-template-columns: 1fr;
-  }
+  /* Auth stacks to single column, brand panel hidden */
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-brand { display: none; }
+  .auth-form-panel { padding: 2rem 1.25rem; align-items: flex-start; padding-top: 3rem; }
+  .auth-card { padding: 2rem 1.5rem; max-width: 480px; }
+  .auth-card-title { font-size: 1.5rem; }
 
-  .auth-brand {
-    display: none;
-  }
+  /* Dashboard */
+  .dashboard-content { padding: 1.75rem 1.25rem; }
+  .dashboard-nav { padding: 0 1.25rem; }
+  .dashboard-greeting h1 { font-size: 2rem !important; }
+  .dashboard-greeting p { font-size: 1rem !important; }
+  .dashboard-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 1rem; }
 
-  .auth-form-panel {
-    padding: 2rem 1.25rem;
-    align-items: flex-start;
-    padding-top: 3rem;
-  }
+  /* Tenant banner in dashboard — let it wrap */
+  .dashboard-content > div[style*="flexWrap"] { padding: 1.5rem !important; gap: 1.25rem !important; }
+}
 
-  .auth-card {
-    padding: 2rem 1.5rem;
-  }
+/* ============================================================
+   RESPONSIVE — Mobile (≤ 640px)
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Auth — tighter spacing */
+  .auth-form-panel { padding: 1.5rem 1rem; padding-top: 2rem; }
+  .auth-card { padding: 1.75rem 1.25rem; border-radius: var(--radius-lg); }
+  .auth-card-title { font-size: 1.35rem; }
+  .auth-card-subtitle { font-size: 0.85rem; }
 
-  .dashboard-content {
-    padding: 1.5rem 1rem;
-  }
+  /* Form elements — smaller padding */
+  .form-input { padding: 0.65rem 0.9rem; font-size: 0.95rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { font-size: 0.8rem; }
 
+  /* OTP inputs — flex-wrap + smaller */
+  .otp-inputs { gap: 0.5rem; flex-wrap: wrap; }
+  .otp-input { width: 44px; height: 52px; font-size: 1.25rem; }
+
+  /* Buttons */
+  .btn { padding: 0.7rem 1.25rem; font-size: 0.9rem; }
+
+  /* Dashboard */
   .dashboard-nav {
+    height: 56px;
     padding: 0 1rem;
   }
+  .nav-logo-name { font-size: 1.1rem; }
+  .nav-logo-icon { width: 32px; height: 32px; }
+  .nav-user { gap: 0.5rem !important; }
+  .nav-user > span { display: none !important; } /* hide firstName on mobile */
+  .dashboard-content { padding: 1.5rem 1rem; }
+  .dashboard-greeting { margin-bottom: 1.75rem; }
+  .dashboard-greeting h1 { font-size: 1.65rem !important; }
+  .dashboard-greeting p { font-size: 0.95rem !important; margin-top: 0.25rem !important; }
+
+  /* Tenant banner — stack vertically */
+  .dashboard-content > div[style*="flexWrap"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 1.25rem !important;
+    margin-bottom: 2rem !important;
+  }
+  .dashboard-content > div[style*="flexWrap"] > div:first-child {
+    gap: 1rem !important;
+  }
+  .dashboard-content > div[style*="flexWrap"] > div:last-child {
+    width: 100%;
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+  }
+  .dashboard-content > div[style*="flexWrap"] > div:last-child > * {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Dashboard module grid — single column */
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .dashboard-module-card { padding: 1.5rem; }
+
+  /* Dashboard module section heading */
+  .dashboard-content > h3 { font-size: 1.1rem !important; margin-bottom: 1rem !important; }
+
+  /* Settings */
+  .settings-section { gap: 1rem; margin-bottom: 2rem; }
+  .settings-section-info h2 { font-size: 1.05rem; }
+  .settings-section-card { padding: 1.25rem; }
 }
+
+/* ============================================================
+   RESPONSIVE — Small mobile (≤ 420px)
+   ============================================================ */
+@media (max-width: 420px) {
+  .auth-card { padding: 1.5rem 1rem; }
+  .auth-card-header { margin-bottom: 1.25rem; }
+
+  /* OTP even smaller */
+  .otp-input { width: 40px; height: 48px; font-size: 1.1rem; }
+  .otp-inputs { gap: 0.4rem; }
+
+  /* Dashboard nav — simplify */
+  .dashboard-nav { padding: 0 0.75rem; }
+  .nav-logo-name { font-size: 1rem; }
+  .btn-signout { padding: 0.4rem !important; }
+
+  .dashboard-content { padding: 1.25rem 0.85rem; }
+  .dashboard-greeting h1 { font-size: 1.45rem !important; }
+  .dashboard-module-card { padding: 1.25rem; }
+}
+
+/* ============================================================
+   RESPONSIVE — Storefront public (public booking page)
+   ============================================================ */
+@media (max-width: 900px) {
+  .storefront-minimal .storefront-header { padding: 1rem 1.25rem !important; gap: 1rem !important; }
+  .storefront-classic .storefront-cover { height: 220px !important; }
+  .storefront-classic .storefront-container { margin-top: -100px !important; padding: 0 1.25rem !important; }
+  .storefront-split .storefront-cover-side { flex: 1 1 100% !important; min-height: 220px !important; }
+  .storefront-split .storefront-content-side { padding: 2rem 1.25rem !important; }
+  .storefront-info-grid { gap: 1.25rem !important; margin-bottom: 2rem !important; }
+  .storefront-title { font-size: 1.25rem !important; }
+}
+@media (max-width: 640px) {
+  .storefront-minimal .storefront-header { padding: 0.85rem 1rem !important; }
+  .storefront-classic .storefront-cover { height: 180px !important; }
+  .storefront-classic .storefront-container { margin-top: -80px !important; padding: 0 1rem !important; }
+  .storefront-split .storefront-content-side { padding: 1.5rem 1rem !important; }
+  .storefront-container { padding: 0 1rem !important; }
+  /* Main info h1 — the tenant name */
+  .storefront-root h1 { font-size: 1.85rem !important; }
+  /* Section h2 titles (Servicios, Colaboradores, Reseñas) */
+  .storefront-root h2 { font-size: 1.25rem !important; margin-bottom: 1rem !important; }
+  /* Horizontal scroll lists — ensure gap is tighter */
+  .storefront-root div[style*="overflowX"] { gap: 0.9rem !important; }
+}
+@media (max-width: 420px) {
+  .storefront-classic .storefront-cover { height: 150px !important; }
+  .storefront-classic .storefront-container { margin-top: -60px !important; }
+  .storefront-root h1 { font-size: 1.6rem !important; }
+}
+
+/* ============================================================
+   RESPONSIVE — Booking modal
+   ============================================================ */
+@media (max-width: 640px) {
+  .booking-modal-overlay { padding: 0.5rem !important; }
+  .booking-modal { padding: 1.5rem 1.25rem !important; max-height: 95vh !important; border-radius: var(--radius-md) !important; }
+  .booking-modal > button[aria-label], .booking-modal > button:first-of-type { top: 0.75rem !important; right: 0.75rem !important; }
+}
+@media (max-width: 420px) {
+  .booking-modal { padding: 1.25rem 1rem !important; }
+}
+
 
 /* ============================================================
    MODULE CARDS (Dashboard Grid)
@@ -848,6 +980,9 @@ a {
   gap: 1.5rem;
 }
 
+@media (max-width: 1024px) {
+  .settings-section { grid-template-columns: 220px 1fr; gap: 2rem; }
+}
 @media (max-width: 800px) {
   .settings-section {
     grid-template-columns: 1fr;
@@ -856,6 +991,9 @@ a {
   .settings-grid {
     grid-template-columns: 1fr;
   }
+}
+@media (max-width: 640px) {
+  .settings-section-card { padding: 1.25rem; gap: 1.1rem; }
 }
 
 .dashboard-module-card.clickable {

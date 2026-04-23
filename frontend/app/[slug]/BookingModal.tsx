@@ -80,14 +80,14 @@ export default function BookingModal({
   if (!isOpen) return null
 
   return (
-    <div style={{
+    <div className="booking-modal-overlay" style={{
       position: 'fixed', inset: 0, zIndex: 9999,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: '1rem'
     }}>
-      <div style={{ 
+      <div className="booking-modal" style={{
         width: '100%', maxWidth: 600, maxHeight: '90vh', overflowY: 'auto',
-        background: 'var(--color-bg-base)', border: '1px solid var(--color-border)', 
+        background: 'var(--color-bg-base)', border: '1px solid var(--color-border)',
         padding: '2.5rem', borderRadius: 'var(--radius-lg)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left',
         position: 'relative'
       }}>
